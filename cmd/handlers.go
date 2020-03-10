@@ -8,7 +8,11 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func rootHandler(w http.ResponseWriter, r *http.Request) {
+type msg struct {
+	Num int
+}
+
+func RootHandler(w http.ResponseWriter, r *http.Request) {
 	content, err := ioutil.ReadFile("index.html")
 	if err != nil {
 		fmt.Println("Could not open file.", err)
@@ -16,7 +20,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", content)
 }
 
-func wsHandler(w http.ResponseWriter, r *http.Request) {
+func WsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("Origin") != "http://"+r.Host {
 		http.Error(w, "Origin not allowed", 403)
 		return

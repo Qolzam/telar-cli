@@ -40,6 +40,3 @@
 ## License
 
 MIT
-# telar-cli
-# telar-cli
-# telar-cli
