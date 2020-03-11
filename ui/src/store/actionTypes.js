@@ -1,9 +1,17 @@
 const actionTypes = {
+
+    // Client Actions
     SET_SETUP_STATE: 'SET_SETUP_STATE',
     SET_SETUP_STEP: 'SET_SETUP_STEP',
     SET_INPUT: 'SET_INPUT',
     SET_DEPLOY_OPEN: 'SET_DEPLOY_OPEN',
-
+    POP_MESSAGE: 'POP_MESSAGE',
+    SET_STEP_CONDITION: 'SET_STEP_CONDITION',
+    SHOW_INFO_DIALOG: 'SHOW_INFO_DIALOG',
+    HIDE_INFO_DIALOG: 'HIDE_INFO_DIALOG',
+    
+    // Server HTTP Actions
+    START_STEP : "START_STEP",
 }
 
 export default actionTypes

@@ -38,8 +38,12 @@ export default function InitialStep() {
   const githubUsername = useSelector(state => state['inputs']['githubUsername'])
   const projectDirectory = useSelector(state => state['inputs']['projectDirectory'])
   const handleInputChange = (name) => (event) => {
-    dispatch(actions.setInput(name, event.currentTarget.value))
+    const {value} = event.currentTarget
+    dispatch(actions.setInput(name, value))
   }
+
+
+
   const [helpOpen, setHelpOpen] = React.useState(false);
 
   const handleHelp = () => {
@@ -49,6 +53,7 @@ export default function InitialStep() {
   const handleCloseHelp = () => {
     setHelpOpen(false);
   };
+  
   
   const helpContent = () => (
     <Card className={classes.root} variant="outlined">

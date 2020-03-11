@@ -11,7 +11,7 @@ clean:
 .PHONY: build
 
 build:
-	@cd ./ui && npm install
+	# @cd ./ui && npm install
 	@cd ./ui && npm run build
 	@mkdir -p ./helloworld.app/Contents/MacOS
 	@go build -o ./helloworld.app/Contents/MacOS/helloworld

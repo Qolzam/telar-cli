@@ -30,18 +30,24 @@ func main() {
 	http.Handle("/", http.FileServer(folder))
 
 	// Handle to showMessage func on /hello path
-	http.HandleFunc("/ws", cmd.wsHandler)
-	http.HandleFunc("/", cmd.rootHandler)
-	// Run server at port 8080 as goroutine
+	http.HandleFunc("/ws", cmd.WsHandler)
+	http.HandleFunc("/dispatch", cmd.ClientHandler)
+	// Run server at port 8000 as goroutine
 	// for non-block working
-	go http.ListenAndServe(":8080", nil)
+	go http.ListenAndServe(":8000", nil)
 
 	// Let's open window app with:
 	//  - name: Golang App
 	//  - address: http://localhost:8000
 	//  - sizes: 800x600 px
 	//  - resizable: true
-	webview.Open("Telar", "http://localhost:8080", 800, 600, true)
+	debug := true
+	w := webview.New(debug)
+	defer w.Destroy()
+	w.SetTitle("Telar")
+	w.SetSize(800, 600, webview.HintNone)
+	w.Navigate("http://localhost:8000")
+	w.Run()
 }
 
 func ofccSetup(w http.ResponseWriter, r *http.Request) {

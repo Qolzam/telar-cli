@@ -70,11 +70,70 @@ function getStepContent(step) {
   }
 }
 
+const validInput = (value) => {
+  if(value && value.trim() !== "") {
+    return true
+  }
+  return false
+}
+
+const validInputs = (state, inputs) => {
+  for (const input of inputs) {
+    const isValid = validInput(state['inputs'][input])
+    if (!isValid) {
+      return false
+    }
+   }
+   return true
+
+}
+
+const validCheckbox = (state, inputs) => {
+  for (const input of inputs) {
+    if (!state['inputs'][input]) {
+      return false
+    }
+  }
+   
+    return true
+}
+
+
+
 export default function OFCC() {
   const classes = useStyles();
   const dispatch = useDispatch()
   const setupStep = useSelector(state => state['setupStep'])
+  const stepCondition = {}
   const steps = getSteps();
+
+
+  // ***** Conditions ***** //
+
+  // Init step
+  stepCondition[0]= useSelector(state => validInputs(state, ['githubUsername','projectDirectory']))
+  
+  // Check ingredients
+  stepCondition[1] =useSelector(state =>  validCheckbox(state, ['installKubeseal', 'githubUsernameRegisterd', 'cloneTelarWeb', 'cloneTsServerless', 'cloneTsUi', 'openFaaSApp', 'openFaaSAppHasRepos', 'githubSSHKey','projectDirectory' ]))
+
+  // Firebase storage
+  stepCondition[2] = useSelector(state =>  validCheckbox(state, ['firebaseStorage'] ) === true && validInputs(state, ['bucketName']) === true)
+
+  // Database
+  stepCondition[3] = useSelector(state =>  validCheckbox(state, ['mongoDBConnection'] ) === true && validInputs(state, ['mongoDBUsername', 'mongoDBPassword', 'mongoDBName']) === true)
+
+  // Firebase storage
+  stepCondition[5] = useSelector(state =>  validInputs(state, ['siteKeyRecaptcha', 'recaptchaKey']))
+
+  // OAuth
+  stepCondition[5] = useSelector(state =>  validInputs(state, ['githubOAuthSecret']))
+
+  // User management
+  stepCondition[6] = useSelector(state =>  validInputs(state, ['adminUsername', 'adminPassword', 'gmail', 'gmailPassword']))
+
+  // Websocket
+  stepCondition[7] = useSelector(state =>  validCheckbox(state, ['websocketConnection'] ) === true && validInputs(state, ['gateway', 'payloadSecret', 'websocketURL']) === true)
+
 
   const [deployOpen, setDeployOpen] = React.useState(false);
 
@@ -111,6 +170,7 @@ export default function OFCC() {
                     color="primary"
                     onClick={handleNext}
                     className={classes.button}
+                    disabled={stepCondition[setupStep] !== true}
                   >
                     {setupStep === steps.length - 1 ? 'Deploy' : 'Next'}
                   </Button>

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -8,16 +9,37 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type msg struct {
-	Num int
+type Action struct {
+	Type    string      `json:"type"`
+	Payload interface{} `json:"payload"`
 }
 
-func RootHandler(w http.ResponseWriter, r *http.Request) {
-	content, err := ioutil.ReadFile("index.html")
-	if err != nil {
-		fmt.Println("Could not open file.", err)
+var conn *websocket.Conn
+
+func ClientHandler(w http.ResponseWriter, r *http.Request) {
+	var input []byte
+
+	if r.Body != nil {
+		defer r.Body.Close()
+
+		body, _ := ioutil.ReadAll(r.Body)
+
+		input = body
 	}
-	fmt.Fprintf(w, "%s", content)
+
+	var action Action
+	err := json.Unmarshal(input, &action)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Sprintf("Unmarshal body: %s", err.Error())))
+	}
+	switch action.Type {
+	case START_STEP:
+		go StartStep()
+
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(fmt.Sprintf("Hello world, input was: %s", string(input))))
 }
 
 func WsHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,26 +47,18 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Origin not allowed", 403)
 		return
 	}
-	conn, err := websocket.Upgrade(w, r, w.Header(), 1024, 1024)
+	var err error
+	conn, err = websocket.Upgrade(w, r, w.Header(), 1024, 1024)
 	if err != nil {
 		http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
 	}
 
-	go echo(conn)
 }
-func echo(conn *websocket.Conn) {
-	for {
-		m := msg{}
 
-		err := conn.ReadJSON(&m)
-		if err != nil {
-			fmt.Println("Error reading json.", err)
-		}
+func Echo(message Action) {
 
-		fmt.Printf("Got message: %#v\n", m)
-
-		if err = conn.WriteJSON(m); err != nil {
-			fmt.Println(err)
-		}
+	if err := conn.WriteJSON(message); err != nil {
+		fmt.Println(err)
 	}
+
 }

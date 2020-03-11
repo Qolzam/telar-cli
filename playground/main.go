@@ -745,15 +745,15 @@ func downloadBinary(client *http.Client, url, name, downloadTo string) (string, 
 }
 
 func cloneTSUI(rootDir string) error {
-	return clone(rootDir+"/ts-ui", "git@github.com:red-gold/ts-ui.git")
+	return gitClone(rootDir+"/ts-ui", "git@github.com:red-gold/ts-ui.git")
 }
 
 func cloneTSServerless(rootDir string) error {
-	return clone(rootDir+"/ts-serverless", "git@github.com:red-gold/ts-serverless.git")
+	return gitClone(rootDir+"/ts-serverless", "git@github.com:red-gold/ts-serverless.git")
 }
 
 func cloneTelarWeb(rootDir string) error {
-	return clone(rootDir+"/telar-web", "git@github.com:red-gold/telar-web.git")
+	return gitClone(rootDir+"/telar-web", "git@github.com:red-gold/telar-web.git")
 }
 
 func checkFirebaseServiceAccountExist(pathWD string) error {
@@ -765,7 +765,7 @@ func checkFirebaseServiceAccountExist(pathWD string) error {
 	return nil
 }
 
-func clone(projectDirectory string, repoURL string) error {
+func gitClone(projectDirectory string, repoURL string) error {
 	currentUser, err := user.Current()
 	if err != nil {
 		return err

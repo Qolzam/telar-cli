@@ -53,7 +53,6 @@ export default function CheckIngredients() {
 
   const githubUsername = useSelector(state => state['inputs']['githubUsername'])
 
-  const installGit = useSelector(state => state['inputs']['installGit'])
   const installKubeseal = useSelector(state => state['inputs']['installKubeseal'])
   const githubUsernameRegisterd = useSelector(state => state['inputs']['githubUsernameRegisterd'])
   const cloneTelarWeb = useSelector(state => state['inputs']['cloneTelarWeb'])
@@ -114,11 +113,6 @@ export default function CheckIngredients() {
         <FormControl component="fieldset" className={classes.formControl}>
           <FormLabel component="legend">Ingredients</FormLabel>
           <FormGroup>
-            <FormControlLabel
-              control={checkBox(installGit)}
-              checked={installGit}
-              label="Check Git"
-            />
            
             <FormControlLabel
               control={checkBox(installKubeseal)}

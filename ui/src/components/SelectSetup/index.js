@@ -15,6 +15,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import actions from '../../store/actions'
+import services from '../../services';
 
 const useStyles = makeStyles(theme => ({
     formControl: {
@@ -36,7 +37,7 @@ export default function SelectSetup() {
     };
 
     const handleNext = event => {
-
+        services.dispatchServer(actions.startStep())
        dispatch(actions.setSetupState('progress'))
     };
 

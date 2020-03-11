@@ -53,7 +53,7 @@ export default function Websocket() {
   const dispatch = useDispatch()
   const gateway = useSelector(state => state['inputs']['gateway'])
   const payloadSecret = useSelector(state => state['inputs']['payloadSecret'])
-  const herokuAppName = useSelector(state => state['inputs']['herokuAppName'])
+  const websocketURL = useSelector(state => state['inputs']['websocketURL'])
   const websocketConnection = useSelector(state => state['inputs']['websocketConnection'])
   const bull = <span className={classes.bullet}>•</span>;
   const [state, setState] = React.useState({
@@ -111,7 +111,7 @@ export default function Websocket() {
         }}
         id="outlined-required"
         label="Gateway"
-        
+        value={gateway}
         variant="outlined"
       />
       <br />
@@ -122,7 +122,7 @@ export default function Websocket() {
         }}
         id="outlined-required"
         label="Payload Secret"
-        
+        value={payloadSecret}
         variant="outlined"
       />
       <br />
@@ -131,7 +131,7 @@ export default function Websocket() {
         required
         id="outlined-required"
         label="Heroku App Name"
-        
+        value={websocketURL}
         variant="outlined"
       />
       <br />

@@ -11,10 +11,18 @@ const initialState = {
         return {...state, setupState: payload.state}
       case actionTypes.SET_SETUP_STEP:
         return {...state, setupStep: payload.step}
+      case actionTypes.SET_STEP_CONDITION:
+        return {...state, stepCondition: {[payload.step]: payload.valid}}
       case actionTypes.SET_INPUT:
         return {...state, inputs: {...state.inputs, [payload.key]: payload.value}}
       case actionTypes.SET_DEPLOY_OPEN:
         return {...state, deployOpen: payload.open}
+      case actionTypes.POP_MESSAGE:
+        return {...state, popMessage: payload.message}
+      case actionTypes.SHOW_INFO_DIALOG:
+        return {...state, infoDialog: {message: payload.message, url: payload.message, open: true }}
+      case actionTypes.HIDE_INFO_DIALOG:
+        return {...state, infoDialog: {message: "", url: "", open: false }}
       default:
         return state
     }
