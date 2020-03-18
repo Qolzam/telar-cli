@@ -6,7 +6,7 @@
 <h1 align="center">Telar Social on-click setup</h1>
 
 <div align="center">
- Telar CLI automated whole the [Telar Social](https://telar.press) installation. 
+ Telar CLI automated whole the <a href="https://telar.press" target="_blank">Telar Social</a> installation. 
 </div>
 
 ### Telar Social
