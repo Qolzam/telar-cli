@@ -2,7 +2,7 @@
 
 ### Setup Options
 
-- OpenFaaS Cloud Community Cluster
+- [OpenFaaS Cloud Community Cluster]
   + Ask for github username.
   + Check some ingredients
     - Git already is installed.
