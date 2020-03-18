@@ -39,7 +39,15 @@ Our top sponsors [Become a sponsor](https://www.patreon.com/qolzam)
 
 Need help, [join our community](https://docs.google.com/forms/d/e/1FAIpQLSdkwt5pxmyCZQO0AmyAghBOdA-XBG298Pfm5Dw1xjNGaGeCYQ/viewform).
 
+## Inspiration
+
+- [ofc-bootstrap](https://github.com/openfaas-incubator/ofc-bootstrap)
+- [faas-cli](https://github.com/openfaas/faas-cli)
+- [arkade](https://github.com/alexellis/arkade)
+
 ## License
 
 This project is licensed under the terms of the
 [MIT license](/LICENSE).
+
+
