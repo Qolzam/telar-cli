@@ -23,14 +23,16 @@ import (
 	"github.com/openfaas/faas-cli/schema"
 )
 
-func checkKubeseal() {
+func checkKubeseal() error {
 
 	exist := commandExists("kubeseal")
-	if exist {
-		fmt.Println("exist")
-	} else {
-		downloadKubeSeal()
+	if !exist {
+		err := downloadKubeSeal()
+		if isError(err) {
+			return fmt.Errorf("Check kubeseal %s", err.Error())
+		}
 	}
+	return nil
 }
 
 func runCloudSeal(name string, pathWD string, args map[string]string, fromFile *[]string) error {
@@ -130,7 +132,7 @@ func downloadKubeSeal() error {
 	downloadURL := "https://github.com/bitnami/sealed-secrets/releases/download/" + releaseVersion + "/kubeseal-" + osVal + "-" + arch
 
 	fmt.Printf("Starting download of kubeseal %s, this could take a few moments.\n", releaseVersion)
-	output, err := downloadBinary(http.DefaultClient, downloadURL, "kubeseal", downloadTo)
+	output, err := downloadFile(http.DefaultClient, downloadURL, "kubeseal", downloadTo)
 
 	if err != nil {
 		return err
@@ -189,7 +191,7 @@ func findRelease(url string) (string, error) {
 	return version, nil
 }
 
-func downloadBinary(client *http.Client, url, name, downloadTo string) (string, error) {
+func downloadFile(client *http.Client, url, name, downloadTo string) (string, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return "", err

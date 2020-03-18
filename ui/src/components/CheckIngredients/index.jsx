@@ -53,6 +53,8 @@ export default function CheckIngredients() {
 
   const githubUsername = useSelector(state => state['inputs']['githubUsername'])
 
+  const loadingCheckIngredients = useSelector(state => state['inputs']['loadingCheckIngredients'])
+
   const installKubeseal = useSelector(state => state['inputs']['installKubeseal'])
   const githubUsernameRegisterd = useSelector(state => state['inputs']['githubUsernameRegisterd'])
   const cloneTelarWeb = useSelector(state => state['inputs']['cloneTelarWeb'])
@@ -114,7 +116,30 @@ export default function CheckIngredients() {
           <FormLabel component="legend">Ingredients</FormLabel>
           <FormGroup>
            
+          
             <FormControlLabel
+              control={
+                <Checkbox readOnly={loadingCheckIngredients} checked={openFaaSApp} onChange={handleChange('openFaaSApp')} />
+              }
+              label={`The OpenFaaS GitHub App is installed.`}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox readOnly={loadingCheckIngredients} checked={openFaaSAppHasRepos} onChange={handleChange('openFaaSAppHasRepos')} />
+              }
+              label={`Add repositories in the OpenFaaS GitHub App.`}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox readOnly={loadingCheckIngredients} checked={githubSSHKey} onChange={handleChange('githubSSHKey')} />
+              }
+              label={`Adding the SSH key to the Github.`}
+            />
+
+            {
+              loadingCheckIngredients && (
+                <>
+                <FormControlLabel
               control={checkBox(installKubeseal)}
               checked={installKubeseal}
               label="Install Kubeseal"
@@ -140,24 +165,9 @@ export default function CheckIngredients() {
               checked={cloneTsUi}
               label={<span>Check the fork on <b>{githubUsername}</b> & Clone ts-ui repository.</span>}
             />
-            <FormControlLabel
-              control={
-                <Checkbox checked={openFaaSApp} onChange={handleChange('openFaaSApp')} />
-              }
-              label={`The OpenFaaS GitHub App is installed.`}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox checked={openFaaSAppHasRepos} onChange={handleChange('openFaaSAppHasRepos')} />
-              }
-              label={`Add repositories in the OpenFaaS GitHub App.`}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox checked={githubSSHKey} onChange={handleChange('githubSSHKey')} />
-              }
-              label={`Adding the SSH key to the Github.`}
-            />
+                </>
+              )
+            }
           </FormGroup>
         </FormControl>
       </CardContent>

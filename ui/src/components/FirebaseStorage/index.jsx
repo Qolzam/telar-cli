@@ -50,7 +50,11 @@ export default function FirebaseStorage() {
   const classes = useStyles();
   const dispatch = useDispatch()
   const bucketName = useSelector(state => state['inputs']['bucketName'])
+  const firebaseServiceAccount = useSelector(state => state['inputs']['firebaseServiceAccount'])
   const firebaseStorage = useSelector(state => state['inputs']['firebaseStorage'])
+
+  const loadingFirebaseStorage = useSelector(state => state['inputs']['loadingFirebaseStorage'])
+
   const bull = <span className={classes.bullet}>•</span>;
   const [state, setState] = React.useState({
     gilad: true,
@@ -102,7 +106,7 @@ export default function FirebaseStorage() {
   )
 
   const handleChange = name => event => {
-    dispatch(actions.setInput(bucketName, event.currentTarget.value))
+    dispatch(actions.setInput(name, event.currentTarget.value))
   };
   const checkBox = (checked) => {
     if (checked) {
@@ -115,10 +119,6 @@ export default function FirebaseStorage() {
       <CardContent>
         <Button variant="outlined" color="secondary" onClick={() => handleHelp(0)}>
           Need Help?
-      </Button>
-        {'  '}
-        <Button variant="outlined" color="primary" onClick={() => handleHelp(1)}>
-          Use Public Firebase Storage
       </Button>
       <br />
         <br />
@@ -138,9 +138,17 @@ export default function FirebaseStorage() {
         <br />
         <br />
 
-        <FormControl component="fieldset" className={classes.formControl}>
+       { loadingFirebaseStorage && (
+         
+         <FormControl component="fieldset" className={classes.formControl}>
 
           <FormGroup>
+            <FormControlLabel
+              control={checkBox(firebaseStorage)}
+              label="Check serviceAccount.json file"
+              checked={firebaseStorage}
+            />
+
             <FormControlLabel
               control={checkBox(firebaseStorage)}
               label="Check firebase storage"
@@ -148,7 +156,7 @@ export default function FirebaseStorage() {
             />
 
           </FormGroup>
-        </FormControl>
+        </FormControl>)}
       </CardContent>
       <CardActions>
       </CardActions>

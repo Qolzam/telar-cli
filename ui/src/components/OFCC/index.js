@@ -18,6 +18,7 @@ import GoogleReCaptcha from '../GoogleReCaptcha';
 import OAuth from '../OAuth';
 import DeployDialog from '../DepolyDialog';
 import actions from '../../store/actions'
+import services from '../../services';
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -104,53 +105,47 @@ export default function OFCC() {
   const classes = useStyles();
   const dispatch = useDispatch()
   const setupStep = useSelector(state => state['setupStep'])
+  const deployOpen = useSelector(state => state['deployOpen'])
   const stepCondition = {}
   const steps = getSteps();
 
 
   // ***** Conditions ***** //
 
+ const state = useSelector(state =>  state) 
+
   // Init step
-  stepCondition[0]= useSelector(state => validInputs(state, ['githubUsername','projectDirectory']))
+  stepCondition[0]= (validInputs(state, ['githubUsername','projectDirectory']))
   
   // Check ingredients
-  stepCondition[1] =useSelector(state =>  validCheckbox(state, ['installKubeseal', 'githubUsernameRegisterd', 'cloneTelarWeb', 'cloneTsServerless', 'cloneTsUi', 'openFaaSApp', 'openFaaSAppHasRepos', 'githubSSHKey','projectDirectory' ]))
+  stepCondition[1] =(validCheckbox(state, ['openFaaSApp', 'openFaaSAppHasRepos', 'githubSSHKey' ]) && !validCheckbox(state,['loadingCheckIngredients']))
 
   // Firebase storage
-  stepCondition[2] = useSelector(state =>  validCheckbox(state, ['firebaseStorage'] ) === true && validInputs(state, ['bucketName']) === true)
+  stepCondition[2] = (!validCheckbox(state, ['loadingFirebaseStorage'] ) && validInputs(state, ['bucketName']) === true)
 
   // Database
-  stepCondition[3] = useSelector(state =>  validCheckbox(state, ['mongoDBConnection'] ) === true && validInputs(state, ['mongoDBUsername', 'mongoDBPassword', 'mongoDBName']) === true)
+  stepCondition[3] = (!validCheckbox(state, ['loadingMongoDB'] ) && validInputs(state, ['mongoDBHost', 'mongoDBPassword', 'mongoDBName']) === true)
 
   // Firebase storage
-  stepCondition[5] = useSelector(state =>  validInputs(state, ['siteKeyRecaptcha', 'recaptchaKey']))
+  stepCondition[4] = (validInputs(state, ['siteKeyRecaptcha', 'recaptchaKey']))
 
   // OAuth
-  stepCondition[5] = useSelector(state =>  validInputs(state, ['githubOAuthSecret']))
+  stepCondition[5] = (validInputs(state, ['githubOAuthSecret']))
 
   // User management
-  stepCondition[6] = useSelector(state =>  validInputs(state, ['adminUsername', 'adminPassword', 'gmail', 'gmailPassword']))
+  stepCondition[6] = (validInputs(state, ['adminUsername', 'adminPassword', 'gmail', 'gmailPassword']))
 
   // Websocket
-  stepCondition[7] = useSelector(state =>  validCheckbox(state, ['websocketConnection'] ) === true && validInputs(state, ['gateway', 'payloadSecret', 'websocketURL']) === true)
-
-
-  const [deployOpen, setDeployOpen] = React.useState(false);
-
-  const handleDeploy = () => {
-    setDeployOpen(true);
-  };
+  stepCondition[7] = ((!validCheckbox(state, ['loadingWebsocket'] ) || validCheckbox(state, ['websocketConnection'] )) && validInputs(state, ['gateway', 'payloadSecret', 'websocketURL']) === true)
 
   const handleCloseDeploy = () => {
-    setDeployOpen(false);
+    dispatch(actions.setInput('deployOpen', false))
   };
 
   const handleNext = () => {
-    if (setupStep === 7) {
-      setDeployOpen(true)
-      return
-    }
-    dispatch(actions.setSetupStep(setupStep + 1))
+
+    services.dispatchServer(actions.checkStep(state))
+    
   };
 
 

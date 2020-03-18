@@ -1,7 +1,8 @@
 import actionTypes from './actionTypes'
 
 const initialState = {
-  inputs: {}
+  inputs: {},
+  infoDialog: {message: "", url: "", open: false}
 }
 
   function appReducer(state = initialState, action) {

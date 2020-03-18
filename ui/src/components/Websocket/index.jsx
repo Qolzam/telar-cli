@@ -55,6 +55,9 @@ export default function Websocket() {
   const payloadSecret = useSelector(state => state['inputs']['payloadSecret'])
   const websocketURL = useSelector(state => state['inputs']['websocketURL'])
   const websocketConnection = useSelector(state => state['inputs']['websocketConnection'])
+
+  const loadingWebsocket = useSelector(state => state['inputs']['loadingWebsocket'])
+
   const bull = <span className={classes.bullet}>•</span>;
   const [state, setState] = React.useState({
     gilad: true,
@@ -129,15 +132,16 @@ export default function Websocket() {
       <br />
         <TextField
         required
+        onChange={handleChange('websocketURL')}
         id="outlined-required"
-        label="Heroku App Name"
+        label="Websocket URL"
         value={websocketURL}
         variant="outlined"
       />
       <br />
       <br />
       
-        <FormControl component="fieldset" className={classes.formControl}>
+        {loadingWebsocket && (<FormControl component="fieldset" className={classes.formControl}>
 
           <FormGroup>
           <FormControlLabel
@@ -148,7 +152,7 @@ export default function Websocket() {
            
            
           </FormGroup>
-        </FormControl>
+        </FormControl>)}
       </CardContent>
       <CardActions>
       </CardActions>

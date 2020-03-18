@@ -96,14 +96,26 @@ func gitPush(path string) error {
 	return nil
 }
 
-func cloneTSUI(rootDir string) error {
-	return gitClone(rootDir+"/ts-ui", "git@github.com:red-gold/ts-ui.git")
+func gitDeploy(repoPath string) error {
+	err := gitCommit(repoPath)
+	if isError(err) {
+		return err
+	}
+	err = gitPush(repoPath)
+	if isError(err) {
+		return err
+	}
+	return nil
 }
 
-func cloneTSServerless(rootDir string) error {
-	return gitClone(rootDir+"/ts-serverless", "git@github.com:red-gold/ts-serverless.git")
+func cloneTSUI(rootDir, githubUsername string) error {
+	return gitClone(rootDir+"/ts-ui", fmt.Sprintf("git@github.com:%s/ts-ui.git", githubUsername))
 }
 
-func cloneTelarWeb(rootDir string) error {
-	return gitClone(rootDir+"/telar-web", "git@github.com:red-gold/telar-web.git")
+func cloneTSServerless(rootDir, githubUsername string) error {
+	return gitClone(rootDir+"/ts-serverless", fmt.Sprintf("git@github.com:%s/ts-serverless.git", githubUsername))
+}
+
+func cloneTelarWeb(rootDir, githubUsername string) error {
+	return gitClone(rootDir+"/telar-web", fmt.Sprintf("git@github.com:%s/telar-web.git", githubUsername))
 }

@@ -3,18 +3,22 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"time"
+	"strings"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func checkDB() error {
-	dbURL := "mongodb+srv://telar_user:pass@cluster0-l6ojz.mongodb.net/test?retryWrites=true&w=majority"
-	client, err := mongo.NewClient(options.Client().ApplyURI(fmt.Sprintf(dbURL)))
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+func checkDB(mongoDBHost string, mongoDBPassword string) error {
+	dbHost := strings.Replace(mongoDBHost, "<password>", mongoDBPassword, -1)
+	fmt.Println(dbHost)
+	client, err := mongo.NewClient(options.Client().ApplyURI(dbHost))
+	ctx := context.Background()
 	err = client.Connect(ctx)
+	if isError(err) {
+		return err
+	}
 	err = client.Ping(ctx, readpref.Primary())
 	if isError(err) {
 		return err

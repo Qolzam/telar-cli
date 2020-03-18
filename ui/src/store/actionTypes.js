@@ -12,6 +12,7 @@ const actionTypes = {
     
     // Server HTTP Actions
     START_STEP : "START_STEP",
+    CHECK_STEP : "CHECK_STEP",
 }
 
 export default actionTypes

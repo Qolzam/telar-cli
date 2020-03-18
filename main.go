@@ -29,9 +29,11 @@ func main() {
 	// Handle to ./static/build folder on root path
 	http.Handle("/", http.FileServer(folder))
 
-	// Handle to showMessage func on /hello path
+	// Other handlers
 	http.HandleFunc("/ws", cmd.WsHandler)
 	http.HandleFunc("/dispatch", cmd.ClientHandler)
+	http.HandleFunc("/open-url", cmd.OpenURLHandler)
+
 	// Run server at port 8000 as goroutine
 	// for non-block working
 	go http.ListenAndServe(":8000", nil)
@@ -45,7 +47,7 @@ func main() {
 	w := webview.New(debug)
 	defer w.Destroy()
 	w.SetTitle("Telar")
-	w.SetSize(800, 600, webview.HintNone)
+	w.SetSize(600, 600, webview.HintNone)
 	w.Navigate("http://localhost:8000")
 	w.Run()
 }

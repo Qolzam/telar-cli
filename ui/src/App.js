@@ -15,6 +15,7 @@ import Routes from './Routes';
 import configureAppStore from './store'
 import { Provider } from 'react-redux'
 import actions from './store/actions';
+import DialogInfo from './components/DialogInfo'
 const browserHistory = createBrowserHistory();
 
 
@@ -23,6 +24,21 @@ const store = configureAppStore({
   inputs: {
     githubUsername: "",
     projectDirectory: "",
+    bucketName: "resume-web-app",
+    mongoDBHost: "mongodb+srv://telar:<password>@cluster0-jayzq.mongodb.net/test?retryWrites=true&w=majority",
+    mongoDBPassword: "",
+    mongoDBName: "test",
+    siteKeyRecaptcha: "",
+    recaptchaKey: "",
+    githubOAuthSecret: "",
+    githubOAuthClientID: "",
+    adminUsername: "",
+    adminPassword: "",
+    gmail: "",
+    gmailPassword: "",
+    gateway: "",
+    payloadSecret: "",
+    websocketURL: "https://red-gold-socket.herokuapp.com/",
     installGit: false,
     installKubeseal: false,
     githubUsernameRegisterd: false,
@@ -32,12 +48,21 @@ const store = configureAppStore({
     openFaaSApp: false,
     openFaaSAppHasRepos: false,
     githubSSHKey: false,
+    firebaseServiceAccount: false,
     firebaseStorage: false,
     mongoDBConnection: false,
     websocketConnection: false,
+    loadingCheckIngredients: false,
+    loadingFirebaseStorage: false,
+    loadingMongoDB: false,
+    loadingWebsocket: false,
+    loadingStackYaml: false,
+    loadingCreateSecret: false,
+    loadingPublicPrivateKey: false,
     deployTelarWeb: false,
     deployTsServerless: false,
-    deploySocialUi: false
+    deploySocialUi: false,
+    deployOpen: false,
   }, setupState: 'init', setupStep: 0, stepCondition: {}, infoDialog: {message: "", url: "", open: false}
 })
 
@@ -57,7 +82,10 @@ function initWS() {
        store.dispatch(actions.popMessage("Ready!"))
     };
     socket.onmessage = function (e) {
-      store.dispatch(e)
+      const action = JSON.parse(e.data)
+      console.log('action', action)
+      console.log('e.data', e.data)
+      store.dispatch(action)
     }
     socket.onclose = function () {
       store.dispatch(actions.popMessage("Socket closed"))
@@ -118,6 +146,7 @@ function App() {
         <ThemeProvider theme={theme}>
           <Routes />
           <AppSnackbar />
+          <DialogInfo />
         </ThemeProvider>
       </Provider>
     </Router>

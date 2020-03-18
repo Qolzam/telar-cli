@@ -7,7 +7,16 @@ const dispatchServer = (action) => {
     .catch(err => console.log(err)); // catch error
 }
 
+const openURL = (url) => {
+
+    axios
+    .post("/open-url", {url}) // GET request to URL /hello
+    .then(resp => console.log(resp.data)) // save response to state
+    .catch(err => console.log(err)); // catch error
+}
+
 
 export default {
-    dispatchServer
+    dispatchServer,
+    openURL
 }

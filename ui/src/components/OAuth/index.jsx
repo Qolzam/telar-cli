@@ -36,6 +36,7 @@ export default function OAuth() {
 
   const dispatch = useDispatch()
   const githubOAuthSecret = useSelector(state => state['inputs']['githubOAuthSecret'])
+  const githubOAuthClientID = useSelector(state => state['inputs']['githubOAuthClientID'])
   const bull = <span className={classes.bullet}>•</span>;
   const [helpOpen, setHelpOpen] = React.useState(false);
 
@@ -67,7 +68,7 @@ export default function OAuth() {
     <Card className={classes.root} variant="outlined">
       <CardContent>
         <Typography className={classes.title} color="textPrimary" gutterBottom>
-         Enter your valid Githup OAuth secret key.
+         Enter your valid Github OAuth client ID and secret key.
         </Typography>
         <Button variant="outlined" color="secondary" onClick={handleHelp}>
         Need Help?
@@ -77,7 +78,18 @@ export default function OAuth() {
         <TextField
         required
         id="outlined-required"
-        label="Github OAuth Secret key"
+        label="Github OAuth Client ID"
+        
+        variant="outlined"
+        value={githubOAuthClientID}
+        onChange={handleChange('githubOAuthClientID')}
+      />
+      <br />
+      <br />
+        <TextField
+        required
+        id="outlined-required"
+        label="Github OAuth Client Secret"
         
         variant="outlined"
         value={githubOAuthSecret}

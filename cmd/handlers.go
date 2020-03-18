@@ -7,14 +7,41 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	browser "github.com/pkg/browser"
 )
 
-type Action struct {
+type ServerAction struct {
 	Type    string      `json:"type"`
-	Payload interface{} `json:"payload"`
+	Payload ClientState `json:"payload"`
+}
+
+type OpenURLModel struct {
+	URL string `json:"url"`
 }
 
 var conn *websocket.Conn
+
+func OpenURLHandler(w http.ResponseWriter, r *http.Request) {
+	var input []byte
+
+	if r.Body != nil {
+		defer r.Body.Close()
+
+		body, _ := ioutil.ReadAll(r.Body)
+
+		input = body
+	}
+
+	var model OpenURLModel
+	err := json.Unmarshal(input, &model)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Sprintf("Unmarshal body: %s", err.Error())))
+	}
+	browser.OpenURL(model.URL)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(fmt.Sprintf("input was: %s", string(input))))
+}
 
 func ClientHandler(w http.ResponseWriter, r *http.Request) {
 	var input []byte
@@ -27,7 +54,7 @@ func ClientHandler(w http.ResponseWriter, r *http.Request) {
 		input = body
 	}
 
-	var action Action
+	var action ServerAction
 	err := json.Unmarshal(input, &action)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -36,10 +63,34 @@ func ClientHandler(w http.ResponseWriter, r *http.Request) {
 	switch action.Type {
 	case START_STEP:
 		go StartStep()
-
+	case CHECK_STEP:
+		go checkStep(action.Payload)
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(fmt.Sprintf("Hello world, input was: %s", string(input))))
+	w.Write([]byte(fmt.Sprintf("input was: %s", string(input))))
+}
+
+func checkStep(payload ClientState) {
+
+	switch payload.SetupStep {
+	case 0:
+		CheckInitStep(payload.Inputs.ProjectDirectory)
+	case 1:
+		CheckIngredient(payload.Inputs.ProjectDirectory, payload.Inputs.GithubUsername)
+	case 2:
+		CheckStorage(payload.Inputs.ProjectDirectory, payload.Inputs.BucketName)
+	case 3:
+		CheckDatabase(payload.Inputs.MongoDBHost, payload.Inputs.MongoDBPassword)
+	case 4:
+		CheckRecaptcha()
+	case 5:
+		CheckOAuth()
+	case 6:
+		CheckUserManagement(payload.Inputs.GithubUsername)
+	case 7:
+		CheckWebsocket(payload.Inputs)
+
+	}
 }
 
 func WsHandler(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +106,7 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func Echo(message Action) {
+func Echo(message ClientAction) {
 
 	if err := conn.WriteJSON(message); err != nil {
 		fmt.Println(err)

@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"os"
 
@@ -33,16 +32,16 @@ func checkFirebaseStorageBucket(pathWD string, bucketName string) error {
 	r := bytes.NewReader([]byte("Test firebase."))
 	wc := bucket.Object("telar.test").NewWriter(ctx)
 	if _, err = io.Copy(wc, r); err != nil {
-		fmt.Println(err.Error())
+		return err
 	}
 	if err := wc.Close(); err != nil {
-		fmt.Println(err.Error())
+		return err
 	}
 
 	return nil
 }
 
-func checkFirebaseServiceAccountExist(pathWD string) error {
+func checkFirebaseServiceAccount(pathWD string) error {
 	var file, err = os.OpenFile(pathWD+"/serviceAccountKey.json", os.O_RDONLY, 0444)
 	if isError(err) {
 		return err

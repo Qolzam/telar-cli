@@ -68,7 +68,7 @@ type TelarConfig struct {
 	ClientID         string `json:"clientID"`
 	URL              string `json:"url"`
 	WebsocketURL     string `json:"websocketURL"`
-	MongoUser        string `json:"mongoUser"`
+	MongoDBHost      string `json:"mongoDBHost"`
 	MongoDatabase    string `json:"mongoDatabase"`
 	RecaptchaSiteKey string `json:"recaptchaSiteKey"`
 	RefEmail         string `json:"refEmail"`
@@ -89,20 +89,20 @@ type msg struct {
 func main() {
 	// Bind folder path for packaging with Packr
 	// checkSudo()
-	prDir, err := getDefaultProjectDirectory()
+	path, err := getDefaultProjectDirectory()
 	if err != nil {
 		log.Fatal(err)
 	}
 	// checkKubeseal()
-	args := make(map[string]string)
-	args["mongo-pwd"] = "$MONGO_PWD"
-	args["recaptcha-key"] = "$RECAPTCHA_KEY"
-	saPath := prDir + "/serviceAccountKey.json"
-	files := []string{saPath}
-	err = runCloudSeal("red-gold", prDir, args, &files)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// args := make(map[string]string)
+	// args["mongo-pwd"] = "$MONGO_PWD"
+	// args["recaptcha-key"] = "$RECAPTCHA_KEY"
+	// saPath := prDir + "/serviceAccountKey.json"
+	// files := []string{saPath}
+	// err = runCloudSeal("red-gold", prDir, args, &files)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 	// checkCustomers("Qolzam")
 	// err = cloneTSUI(prDir)
 	// if err != nil {
@@ -151,7 +151,7 @@ func main() {
 	// 	ClientID:         "34545",
 	// 	URL:              "https://Qolzam.io4.com",
 	// 	WebsocketURL:     "https://Qolzam.heroku.com",
-	// 	MongoUser:        "mongoUser",
+	// 	MongoDBHost:        "mongoDBHost",
 	// 	MongoDatabase:    "mongoDB",
 	// 	RecaptchaSiteKey: "re-si-key",
 	// 	RefEmail:         "ref@email.com",
@@ -175,10 +175,68 @@ func main() {
 	// 	log.Fatal(err)
 	// }
 
-	http.HandleFunc("/ws", wsHandler)
-	http.HandleFunc("/", rootHandler)
+	// http.HandleFunc("/ws", wsHandler)
+	// http.HandleFunc("/", rootHandler)
 
-	panic(http.ListenAndServe(":8080", nil))
+	// panic(http.ListenAndServe(":8080", nil))
+	// _, err = generatePayloadSecret()
+	// if isError(err) {
+	// 	log.Fatal(err)
+	// }
+	err = createPrivateKey(path)
+	if isError(err) {
+		log.Fatal(err)
+	}
+	err = createPublicKey(path)
+	if isError(err) {
+		log.Fatal(err)
+	}
+}
+
+func createPrivateKey(path string) error {
+	arg := fmt.Sprintf(`-n $(openssl ecparam -genkey -name prime256v1 -noout -out %s/key)`, path)
+	println(arg)
+	task := execute.ExecTask{
+		Command: `echo`,
+		Args:    []string{arg},
+		Shell:   true,
+	}
+	_, taskErr := task.Execute()
+	if taskErr != nil {
+		return taskErr
+	}
+	return nil
+}
+
+func createPublicKey(path string) error {
+	arg := fmt.Sprintf(`-n $(openssl ec -in %s/key -pubout -out %s/key.pub)`, path, path)
+	println(arg)
+	task := execute.ExecTask{
+		Command: `echo`,
+		Args:    []string{arg},
+		Shell:   true,
+	}
+	_, taskErr := task.Execute()
+	if taskErr != nil {
+		return taskErr
+	}
+	return nil
+}
+
+func generatePayloadSecret() (string, error) {
+	task := execute.ExecTask{
+		Command: `echo`,
+		Args:    []string{`-n $(head -c 16 /dev/urandom | shasum | cut -d " " -f 1)`},
+		Shell:   true,
+	}
+	taskExe, taskErr := task.Execute()
+	if taskErr != nil {
+		return "", taskErr
+	}
+
+	payloadSecret := fmt.Sprintf("%s", taskExe.Stdout)
+	fmt.Println(payloadSecret)
+	return payloadSecret, nil
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
@@ -236,7 +294,7 @@ func checkKubeseal() {
 
 func applyConfig(telarConfig TelarConfig) error {
 	for _, repo := range []string{"telar-web", "ts-serverless"} {
-		err := applyAppConfig(telarConfig.PathWD+"/"+repo, telarConfig.MongoUser, telarConfig.MongoDatabase, telarConfig.RecaptchaSiteKey, telarConfig.RefEmail)
+		err := applyAppConfig(telarConfig.PathWD+"/"+repo, telarConfig.MongoDBHost, telarConfig.MongoDatabase, telarConfig.RecaptchaSiteKey, telarConfig.RefEmail)
 		if isError(err) {
 			return err
 		}
@@ -256,14 +314,14 @@ func writeYamlFile(path string, yamlData interface{}) error {
 	return nil
 }
 
-func applyAppConfig(repoPath, mongoUser, mongoDatabase, recaptchaSiteKey, refEmail string) error {
+func applyAppConfig(repoPath, mongoDBHost, mongoDatabase, recaptchaSiteKey, refEmail string) error {
 	filePath := "config/app_config.yml"
 	envs, err := readConfigFile(repoPath, filePath)
 	if isError(err) {
 		return err
 	}
 
-	envs["mongo_user"] = mongoUser
+	envs["mongo_user"] = mongoDBHost
 	envs["mongo_database"] = mongoDatabase
 	envs["recaptcha_site_key"] = recaptchaSiteKey
 	envs["ref_email"] = refEmail
@@ -679,32 +737,35 @@ func findRelease(url string) (string, error) {
 	return version, nil
 }
 
-func checkCustomers(customer string) (string, error) {
+func checkCustomers(customer string) error {
 	url := "https://raw.githubusercontent.com/openfaas/openfaas-cloud/master/CUSTOMERS"
 	client := http.DefaultClient
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	res, err := client.Do(req)
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	if res.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("could not find release, http status code was %d, release may not exist for this architecture", res.StatusCode)
+		return fmt.Errorf("HTTP error status code %s", res.StatusCode)
 	}
 
 	if res.Body != nil {
 		defer res.Body.Close()
 		res, _ := ioutil.ReadAll(res.Body)
 		customers := string(res)
-		fmt.Println(strings.Contains(customers, customer))
-		return string(res), nil
+		if strings.Contains(customers, customer) {
+			return nil
+		} else {
+			return fmt.Errorf("The %s user is not registered in OpenFaaS Cloud CUSTOMERS https://raw.githubusercontent.com/openfaas/openfaas-cloud/master/CUSTOMERS", customers)
+		}
 	}
-	return "", fmt.Errorf("error downloading %s", url)
+	return fmt.Errorf("Unkown error when checking %s for OpenFaaS Cloud CUSTOMERS ", customer)
 }
 
 func downloadBinary(client *http.Client, url, name, downloadTo string) (string, error) {

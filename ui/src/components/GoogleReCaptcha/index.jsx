@@ -94,7 +94,7 @@ export default function GoogleReCaptcha() {
         className={classes.address}
         required
         id="outlined-required"
-        label="reCaptha Key"
+        label="Secret Key"
         
         variant="outlined"
         value={recaptchaKey}

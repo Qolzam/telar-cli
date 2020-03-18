@@ -67,6 +67,13 @@ const startStep = () => {
     }
 }
 
+const checkStep = (payload) => {
+    return {
+        type: actionTypes.CHECK_STEP,
+        payload
+    }
+}
+
 export default {
     setSetupState,
     setSetupStep,
@@ -76,5 +83,6 @@ export default {
     popMessage,
     showInfoDialog,
     hideInfoDialog,
-    startStep
+    startStep,
+    checkStep
 }

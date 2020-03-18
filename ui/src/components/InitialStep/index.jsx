@@ -10,6 +10,7 @@ import TextField from '@material-ui/core/TextField';
 import { Divider } from '@material-ui/core';
 import actions from '../../store/actions'
 import HelpDialog from '../HelpDialog';
+import services from '../../services';
 
 const useStyles = makeStyles({
   root: {
@@ -47,7 +48,7 @@ export default function InitialStep() {
   const [helpOpen, setHelpOpen] = React.useState(false);
 
   const handleHelp = () => {
-    setHelpOpen(true);
+    services.openURL("https://github.com/openfaas/community-cluster")
   };
 
   const handleCloseHelp = () => {
@@ -77,7 +78,7 @@ export default function InitialStep() {
         <br />
         <br />
         <Typography className={classes.title} color="textPrimary" gutterBottom>
-          Enter your valid Githup user name.
+          Enter your valid Github user name.
         </Typography>
         <TextField
           required

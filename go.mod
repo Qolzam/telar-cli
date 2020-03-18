@@ -14,6 +14,7 @@ require (
 	github.com/openfaas/faas v0.0.0-20200308203816-1eea381dd5b8 // indirect
 	github.com/openfaas/faas-cli v0.0.0-20200226083118-b0a70a3f4f20
 	github.com/openfaas/faas-provider v0.15.0 // indirect
+	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/ryanuber/go-glob v1.0.0 // indirect
 	github.com/zserge/webview v0.0.0-20200307090906-10ddbc570a0b
 	go.mongodb.org/mongo-driver v1.3.1

@@ -39,6 +39,7 @@ const (
 
 	// Server HTTP Actions
 	START_STEP = "START_STEP"
+	CHECK_STEP = "CHECK_STEP"
 )
 
 type TelarSecrets struct {
@@ -54,6 +55,32 @@ type TelarSecrets struct {
 	PhoneAuthId string
 }
 
+type ClientState struct {
+	SetupState string       `json:"setupState"`
+	SetupStep  int          `json:"setupStep"`
+	Inputs     ClientInputs `json:"inputs"`
+}
+
+type ClientInputs struct {
+	GithubUsername      string `json:"githubUsername"`
+	ProjectDirectory    string `json:"projectDirectory"`
+	BucketName          string `json:"bucketName"`
+	MongoDBHost         string `json:"mongoDBHost"`
+	MongoDBPassword     string `json:"mongoDBPassword"`
+	MongoDBName         string `json:"mongoDBName"`
+	SiteKeyRecaptcha    string `json:"siteKeyRecaptcha"`
+	RecaptchaKey        string `json:"recaptchaKey"`
+	GithubOAuthSecret   string `json:"githubOAuthSecret"`
+	GithubOAuthClientID string `json:"githubOAuthClientID"`
+	AdminUsername       string `json:"adminUsername"`
+	AdminPassword       string `json:"adminPassword"`
+	Gmail               string `json:"gmail"`
+	GmailPassword       string `json:"gmailPassword"`
+	Gateway             string `json:"gateway"`
+	PayloadSecret       string `json:"payloadSecret"`
+	WebsocketURL        string `json:"websocketURL"`
+}
+
 type TelarConfig struct {
 	GithubUsername   string `json:"githubUsername"`
 	PathWD           string `json:"pathWD"`
@@ -62,7 +89,7 @@ type TelarConfig struct {
 	ClientID         string `json:"clientID"`
 	URL              string `json:"url"`
 	WebsocketURL     string `json:"websocketURL"`
-	MongoUser        string `json:"mongoUser"`
+	MongoDBHost      string `json:"mongoDBHost"`
 	MongoDatabase    string `json:"mongoDatabase"`
 	RecaptchaSiteKey string `json:"recaptchaSiteKey"`
 	RefEmail         string `json:"refEmail"`
@@ -230,7 +257,7 @@ func getDefaultProjectDirectory() (string, error) {
 
 func checkDirectory(dir string) bool {
 
-	if err := os.Mkdir(dir, 0755); os.IsExist(err) {
+	if err := os.MkdirAll(dir, 0755); os.IsExist(err) {
 		return true
 	}
 
@@ -252,4 +279,73 @@ func writeYamlFile(path string, yamlData interface{}) error {
 func commandExists(cmd string) bool {
 	_, err := exec.LookPath(cmd)
 	return err == nil
+}
+
+func interfaceToMapString(in interface{}) map[string]string {
+	stringMap := make(map[string]string)
+	switch v := in.(type) {
+	case map[string]string:
+		for key, value := range v {
+			stringMap[key] = value
+		}
+	}
+	return stringMap
+}
+
+func generatePayloadSecret() (string, error) {
+	task := execute.ExecTask{
+		Command: `echo`,
+		Args:    []string{`-n $(head -c 16 /dev/urandom | shasum | cut -d " " -f 1)`},
+		Shell:   true,
+	}
+	taskExe, taskErr := task.Execute()
+	if taskErr != nil {
+		return "", taskErr
+	}
+
+	payloadSecret := fmt.Sprintf("%s", taskExe.Stdout)
+	fmt.Println(payloadSecret)
+	return payloadSecret, nil
+}
+
+func createPrivateKey(path string) error {
+	arg := fmt.Sprintf(`-n $(openssl ecparam -genkey -name prime256v1 -noout -out %s/key)`, path)
+	println(arg)
+	task := execute.ExecTask{
+		Command: `echo`,
+		Args:    []string{arg},
+		Shell:   true,
+	}
+	_, taskErr := task.Execute()
+	if taskErr != nil {
+		return taskErr
+	}
+	return nil
+}
+
+func createPublicKey(path string) error {
+	arg := fmt.Sprintf(`-n $(openssl ec -in %s/key -pubout -out %s/key.pub)`, path, path)
+	println(arg)
+	task := execute.ExecTask{
+		Command: `echo`,
+		Args:    []string{arg},
+		Shell:   true,
+	}
+	_, taskErr := task.Execute()
+	if taskErr != nil {
+		return taskErr
+	}
+	return nil
+}
+
+func preparePublicPrivateKey(path string) error {
+	err := createPrivateKey(path)
+	if isError(err) {
+		return err
+	}
+	err = createPublicKey(path)
+	if isError(err) {
+		return err
+	}
+	return nil
 }

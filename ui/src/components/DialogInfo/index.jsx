@@ -7,14 +7,22 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import actions from '../../store/actions';
+import services from '../../services';
 
-export default function AlertDialog() {
+export default function DialogInfo() {
   const dispatch = useDispatch()
   const open = useSelector(state => state.infoDialog.open)
   const message = useSelector(state => state.infoDialog.message)
+  const url = useSelector(state => state.infoDialog.url)
 
   const handleClose = () => {
     dispatch(actions.hideInfoDialog())
+  };
+
+  const handleOpenURL = () => {
+    services.openURL({url})
+    dispatch(actions.hideInfoDialog())
+
   };
 
   return (
@@ -25,19 +33,19 @@ export default function AlertDialog() {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Info"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-           {message}
+           {message && `${message[0].toUpperCase()}${message.slice(1)}`}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Close
           </Button>
-          <Button onClick={handleClose} color="primary" autoFocus>
+          {(url && url !== "") && <Button onClick={handleClose} color="primary" autoFocus>
             Instruction
-          </Button>
+          </Button>}
         </DialogActions>
       </Dialog>
   );

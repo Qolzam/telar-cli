@@ -52,10 +52,12 @@ export default function Database() {
   const classes = useStyles();
 
   const dispatch = useDispatch()
-  const mongoDBUsername = useSelector(state => state['inputs']['mongoDBUsername'])
+  const mongoDBHost = useSelector(state => state['inputs']['mongoDBHost'])
   const mongoDBPassword = useSelector(state => state['inputs']['mongoDBPassword'])
   const mongoDBName = useSelector(state => state['inputs']['mongoDBName'])
   const mongoDBConnection = useSelector(state => state['inputs']['mongoDBConnection'])
+
+  const loadingMongoDB = useSelector(state => state['inputs']['loadingMongoDB'])
 
   const bull = <span className={classes.bullet}>•</span>;
   const [state, setState] = React.useState({
@@ -121,10 +123,6 @@ export default function Database() {
         <Button variant="outlined" color="secondary" onClick={() => handleHelp(0)}>
           Need Help?
       </Button>
-        {'  '}
-        <Button variant="outlined" color="primary" onClick={() => handleHelp(1)}>
-          Use Public MongoDB
-      </Button>
       <br />
         <br />
       <Typography className={classes.title} color="textPrimary" gutterBottom>
@@ -134,21 +132,9 @@ export default function Database() {
         <TextField
         required
         id="outlined-required"
-        label="Username"
-        
-        value={mongoDBUsername}
-        onChange={handleChange('mongoDBUsername')}
-        variant="outlined"
-      />
-      <br />
-      <br />
-        <TextField
-        required
-        id="outlined-required"
-        label="Password"
-        
-        value={mongoDBPassword}
-        onChange={handleChange('mongoDBPassword')}
+        label="Host"
+        value={mongoDBHost}
+        onChange={handleChange('mongoDBHost')}
         variant="outlined"
       />
       <br />
@@ -164,8 +150,19 @@ export default function Database() {
       />
       <br />
       <br />
+        <TextField
+        required
+        id="outlined-required"
+        label="Password"
+        
+        value={mongoDBPassword}
+        onChange={handleChange('mongoDBPassword')}
+        variant="outlined"
+      />
+      <br />
+      <br />
       
-        <FormControl component="fieldset" className={classes.formControl}>
+        {loadingMongoDB && (<FormControl component="fieldset" className={classes.formControl}>
 
           <FormGroup>
           
@@ -177,7 +174,7 @@ export default function Database() {
 
            
           </FormGroup>
-        </FormControl>
+        </FormControl>)}
       </CardContent>
       <CardActions>
       </CardActions>

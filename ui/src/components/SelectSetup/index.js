@@ -66,9 +66,9 @@ export default function SelectSetup() {
                         <FormControlLabel disabled value="eks" control={<Radio />} label="AWS EKS" />
                         <FormControlLabel disabled value="gke" control={<Radio />} label="Google Kubernetes Engine" />
                         <FormControlLabel disabled value="aks" control={<Radio />} label="Azure Kubernetes Service" />
-                        <FormControlLabel disabled value="local" control={<Radio />} label="Bare-metal Kubernetes" />
-                        <FormControlLabel disabled value="local" control={<Radio />} label="Bare-metal OpenFaaS Cloud" />
-                        <FormControlLabel disabled value="local" control={<Radio />} label="Bare-metal K3S" />
+                        <FormControlLabel disabled value="local" control={<Radio />} label="Self-host OpenFaaS Cloud" />
+                        <FormControlLabel disabled value="local" control={<Radio />} label="Kubernetes on Bare-metal" />
+                        <FormControlLabel disabled value="local" control={<Radio />} label="K3S on Bare-meta" />
                         <FormControlLabel disabled value="local" control={<Radio />} label="Local Kind" />
                         <FormControlLabel disabled value="local" control={<Radio />} label="Local Minikube" />
                     </RadioGroup>
