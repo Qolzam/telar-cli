@@ -19,8 +19,8 @@ export default function DialogInfo() {
     dispatch(actions.hideInfoDialog())
   };
 
-  const handleOpenURL = () => {
-    services.openURL({url})
+  const handleOpenURL = (url) => {
+    services.openURL(url)
     dispatch(actions.hideInfoDialog())
 
   };
@@ -43,7 +43,7 @@ export default function DialogInfo() {
           <Button onClick={handleClose} color="primary">
             Close
           </Button>
-          {(url && url !== "") && <Button onClick={handleClose} color="primary" autoFocus>
+          {(url && url !== "") && <Button onClick={() => handleOpenURL(url)} color="primary" autoFocus>
             Instruction
           </Button>}
         </DialogActions>

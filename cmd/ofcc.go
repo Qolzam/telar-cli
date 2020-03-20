@@ -13,8 +13,8 @@ type ClientAction struct {
 }
 
 type DialogInfoPayload struct {
-	Message string      `json:"message"`
-	URL     interface{} `json:"url"`
+	Message string `json:"message"`
+	URL     string `json:"url"`
 }
 
 func echoDialogInfo(message string, url string) {
@@ -131,7 +131,7 @@ func StartStep() {
 
 	projectPath, err := getDefaultProjectDirectory()
 	if err != nil {
-		echoDialogInfo(err.Error(), "")
+		echoDialogInfo(err.Error(), "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/1.md")
 		return
 	}
 	echoInput("projectDirectory", projectPath)
@@ -145,13 +145,13 @@ func CheckInitStep(projectPath string) {
 }
 
 func CheckIngredient(projectPath string, githubUsername string) {
-
+	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/1.md"
 	echoInput("loadingCheckIngredients", true)
 
 	// Check kubeseal
 	err := checkKubeseal()
 	if isError(err) {
-		echoDialogInfo(err.Error(), "")
+		echoDialogInfo(err.Error(), helpURL)
 		echoInput("loadingCheckIngredients", false)
 		fmt.Println(err.Error())
 		return
@@ -161,7 +161,7 @@ func CheckIngredient(projectPath string, githubUsername string) {
 	// Check github username is registered in OpenFaaS Cloud CUSTOMERS
 	err = checkCustomers(githubUsername)
 	if isError(err) {
-		echoDialogInfo(err.Error(), "")
+		echoDialogInfo(fmt.Sprintf("Github user name [%s] is not registered in OpenFaaS Cloud Community Cluster. Please check if you have typo.", githubUsername), helpURL)
 		echoInput("loadingCheckIngredients", false)
 		fmt.Println(err.Error())
 		return
@@ -173,7 +173,7 @@ func CheckIngredient(projectPath string, githubUsername string) {
 	if isError(err) && err.Error() != "repository already exists" {
 		errMessage := "telar-web " + err.Error()
 
-		echoDialogInfo(errMessage, "")
+		echoDialogInfo(errMessage, helpURL)
 		echoInput("loadingCheckIngredients", false)
 
 		fmt.Println(errMessage)
@@ -186,7 +186,7 @@ func CheckIngredient(projectPath string, githubUsername string) {
 	if isError(err) && err.Error() != "repository already exists" {
 		errMessage := "ts-serverless " + err.Error()
 
-		echoDialogInfo(errMessage, "")
+		echoDialogInfo(errMessage, helpURL)
 		echoInput("loadingCheckIngredients", false)
 
 		fmt.Println(errMessage)
@@ -199,7 +199,7 @@ func CheckIngredient(projectPath string, githubUsername string) {
 	if isError(err) && err.Error() != "repository already exists" {
 		errMessage := "ts-ui " + err.Error()
 
-		echoDialogInfo(errMessage, "")
+		echoDialogInfo(errMessage, helpURL)
 		echoInput("loadingCheckIngredients", false)
 
 		fmt.Println(errMessage)
@@ -211,12 +211,13 @@ func CheckIngredient(projectPath string, githubUsername string) {
 }
 
 func CheckStorage(projectPath string, bucketName string) {
+	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/3.md"
 	echoInput("loadingFirebaseStorage", true)
 
 	// Check serviceAccount.json file for Firebase
 	err := checkFirebaseServiceAccount(projectPath)
 	if isError(err) {
-		echoDialogInfo(err.Error(), "")
+		echoDialogInfo(err.Error(), helpURL)
 		echoInput("loadingFirebaseStorage", false)
 		fmt.Println(err.Error())
 		return
@@ -226,7 +227,7 @@ func CheckStorage(projectPath string, bucketName string) {
 	// Check Firebase storage access
 	err = checkFirebaseStorageBucket(projectPath, bucketName)
 	if isError(err) {
-		echoDialogInfo(err.Error(), "")
+		echoDialogInfo(err.Error(), helpURL)
 		echoInput("loadingFirebaseStorage", false)
 		fmt.Println(err.Error())
 		return
@@ -238,11 +239,13 @@ func CheckStorage(projectPath string, bucketName string) {
 }
 
 func CheckDatabase(mongoDBHost, MongoDBPassword string) {
+	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/4.md"
+
 	echoInput("loadingMongoDB", true)
 
 	err := checkDB(mongoDBHost, MongoDBPassword)
 	if isError(err) {
-		echoDialogInfo(err.Error(), "")
+		echoDialogInfo(err.Error(), helpURL)
 		echoInput("loadingMongoDB", false)
 		fmt.Println(err.Error())
 		return
@@ -262,10 +265,11 @@ func CheckOAuth() {
 }
 
 func CheckUserManagement(githubUsername string) {
+	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/7.md"
 
 	payloadSecret, err := generatePayloadSecret()
 	if isError(err) {
-		echoDialogInfo(err.Error(), "")
+		echoDialogInfo(err.Error(), helpURL)
 		fmt.Println(err.Error())
 		return
 	}
@@ -275,11 +279,12 @@ func CheckUserManagement(githubUsername string) {
 }
 
 func CheckWebsocket(clientInput ClientInputs) {
+	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/8.md"
 	echoInput("loadingWebsocket", true)
 
 	err := pingWebsocket(clientInput.WebsocketURL)
 	if isError(err) {
-		echoDialogInfo(err.Error(), "")
+		echoDialogInfo(err.Error(), helpURL)
 		echoInput("loadingWebsocket", false)
 		fmt.Println(err.Error())
 		return

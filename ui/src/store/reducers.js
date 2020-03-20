@@ -21,7 +21,7 @@ const initialState = {
       case actionTypes.POP_MESSAGE:
         return {...state, popMessage: payload.message}
       case actionTypes.SHOW_INFO_DIALOG:
-        return {...state, infoDialog: {message: payload.message, url: payload.message, open: true }}
+        return {...state, infoDialog: {message: payload.message, url: payload.url, open: true }}
       case actionTypes.HIDE_INFO_DIALOG:
         return {...state, infoDialog: {message: "", url: "", open: false }}
       default:
