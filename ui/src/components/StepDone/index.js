@@ -8,6 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import services from '../../services';
 
 const useStyles = makeStyles({
   root: {
@@ -21,6 +22,11 @@ const useStyles = makeStyles({
 export default function StepDone() {
   const classes = useStyles();
   const githubUsername = useSelector(state => state['inputs']['githubUsername'])
+
+  const handleLearnMore = () => {
+    services.openURL("https://telar.press")
+  }
+
   return (
     <Card className={classes.root}>
       <CardActionArea>
@@ -42,7 +48,7 @@ export default function StepDone() {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button size="small" href={'https://telar.press'} target={'_blank'} color="primary">
+        <Button size="small" onClick={handleLearnMore} color="primary">
           Learn More
         </Button>
       </CardActions>
