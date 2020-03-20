@@ -15,8 +15,8 @@ clean:
 build:
 	# @cd ./ui && npm install
 	@cd ./ui && npm run build
-	# @go build -o ./telar-cli
 	env GOOS=windows GOARCH=amd64 go build -o  ./telar-cli.exe
+	# @go build -o ./telar-cli
 	@echo "[✔️] Build complete!"
 
 .PHONY: run
