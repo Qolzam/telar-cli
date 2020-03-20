@@ -17,6 +17,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import actions from '../../store/actions'
 import HelpDialog from '../HelpDialog';
+import services from '../../services';
 
 const GreenCheckbox = withStyles({
   root: {
@@ -67,7 +68,7 @@ export default function Websocket() {
   const [helpOpen, setHelpOpen] = React.useState(false);
 
   const handleHelp = () => {
-    setHelpOpen(true);
+   services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/8.md")
   };
 
   const handleCloseHelp = () => {

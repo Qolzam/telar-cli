@@ -41,6 +41,11 @@ export default function SelectSetup() {
        dispatch(actions.setSetupState('progress'))
     };
 
+    const handleVote = event => {
+        event.preventDefault()
+       services.openURL('https://github.com/Qolzam/feedback/issues/1')
+    };
+
     return (
         <Card className={classes.root}>
             <CardActionArea>
@@ -56,9 +61,11 @@ export default function SelectSetup() {
                 <Typography gutterBottom variant="h5" component="h2">
                     OpenFaaS Cloud Community Cluster
           </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
+                <Typography variant="body2" color="textSecondary" >
                     The <a href="https://docs.openfaas.com/openfaas-cloud/community-cluster/" target="_blank">OpenFaaS Cloud Community Cluster</a> is a hosted version of OpenFaaS Cloud. The OpenFaaS Cloud Community Cluster is free to use and probably the quickest and easiest way to try out OpenFaaS. You don't have to set up any servers or even think about Docker, or Kubernetes.
           </Typography>
+          <br/>
+
                 <FormControl component="fieldset" className={classes.formControl}>
                     <FormLabel component="legend">Choose your setup</FormLabel>
                     <RadioGroup aria-label="setup-select" name="setup-select" value={value} onChange={handleChange}>
@@ -73,6 +80,12 @@ export default function SelectSetup() {
                         <FormControlLabel disabled value="local" control={<Radio />} label="Local Minikube" />
                     </RadioGroup>
                 </FormControl>
+                <br/>
+                <br/>
+                <Typography variant="body2" color="textSecondary" component="p">
+                           Vote for your favorite option to enable for the next version. <a href="#" onClick={handleVote}>Click here to vote</a>
+                  </Typography>
+        
             </CardContent>
             <CardActions className={classes.cardActions}>
                 <Button onClick={handleNext} size="small" color="primary">

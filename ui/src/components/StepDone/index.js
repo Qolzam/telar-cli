@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { useDispatch, useSelector } from 'react-redux'
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
@@ -19,13 +20,13 @@ const useStyles = makeStyles({
 
 export default function StepDone() {
   const classes = useStyles();
-
+  const githubUsername = useSelector(state => state['inputs']['githubUsername'])
   return (
     <Card className={classes.root}>
       <CardActionArea>
         <CardMedia
           className={classes.media}
-          image="https://miro.medium.com/max/5748/1*XOOHjCzszsqjjB91e-wsyg.png"
+          image="https://miro.medium.com/max/5748/1*M_jDiQwGmGvrKH_H1peKWQ.png"
           title="We are done!"
         />
         <CardContent>
@@ -33,8 +34,10 @@ export default function StepDone() {
             Done
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
+          Wait until the build and deployment is done. To start login into admin page {`https://${githubUsername}.o6s.io/auth/admin/login`}. Wait until you seen welcome page.
           Now your Telar social is ready to use!😍🏆
-
+          - Signup page: {`https://${githubUsername}.o6s.io/auth/signup`}
+          - Login page: {`https://${githubUsername}.o6s.io/auth/login`}
           </Typography>
         </CardContent>
       </CardActionArea>

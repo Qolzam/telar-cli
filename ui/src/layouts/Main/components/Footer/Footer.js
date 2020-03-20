@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import { Typography, Link } from '@material-ui/core';
+import services from '../../../../services';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -14,6 +15,12 @@ const Footer = props => {
   const { className, ...rest } = props;
 
   const classes = useStyles();
+  
+  const handleTelarLink = (event) => {
+
+    event.preventDefault()
+    services.openURL('https://telar.press/')
+  }
 
   return (
     <div
@@ -24,15 +31,12 @@ const Footer = props => {
         &copy;{' '}
         <Link
           component="a"
-          href="https://telar.press/"
-          target="_blank"
+          href="#"
+          onClick={handleTelarLink}
         >
           Telar
         </Link>
-        . 2019
-      </Typography>
-      <Typography variant="caption">
-        © Red Gold All Rights Reserved
+        {'  '} 2020
       </Typography>
     </div>
   );

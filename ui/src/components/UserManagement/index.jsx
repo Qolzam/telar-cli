@@ -10,6 +10,7 @@ import TextField from '@material-ui/core/TextField';
 import { Divider } from '@material-ui/core';
 import actions from '../../store/actions'
 import HelpDialog from '../HelpDialog';
+import services from '../../services';
 
 const useStyles = makeStyles({
   root: {
@@ -41,7 +42,7 @@ export default function UserManagement() {
   const [helpOpen, setHelpOpen] = React.useState(false);
 
   const handleHelp = () => {
-    setHelpOpen(true);
+    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/7.md")
   };
 
   const handleCloseHelp = () => {

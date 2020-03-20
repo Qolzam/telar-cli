@@ -15,6 +15,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import actions from '../../store/actions'
 import HelpDialog from '../HelpDialog';
+import services from '../../services';
 
 const GreenCheckbox = withStyles({
   root: {
@@ -69,8 +70,7 @@ export default function FirebaseStorage() {
   const [helpType, setHelpType] = React.useState(0);
 
   const handleHelp = (helpType) => {
-    setHelpOpen(true);
-    setHelpType(helpType)
+    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/3.md")
   };
 
   const handleCloseHelp = () => {

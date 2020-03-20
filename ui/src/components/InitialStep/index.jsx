@@ -48,7 +48,7 @@ export default function InitialStep() {
   const [helpOpen, setHelpOpen] = React.useState(false);
 
   const handleHelp = () => {
-    services.openURL("https://github.com/openfaas/community-cluster")
+    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/1.md")
   };
 
   const handleCloseHelp = () => {

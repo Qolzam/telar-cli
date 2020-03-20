@@ -10,6 +10,7 @@ import TextField from '@material-ui/core/TextField';
 import { Divider } from '@material-ui/core';
 import actions from '../../store/actions'
 import HelpDialog from '../HelpDialog';
+import services from '../../services';
 
 const useStyles = makeStyles({
   root: {
@@ -44,8 +45,7 @@ export default function GoogleReCaptcha() {
   const [helpType, setHelpType] = React.useState(0);
 
   const handleHelp = (helpType) => {
-    setHelpOpen(true);
-    setHelpType(helpType)
+    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/5.md")
   };
 
   const handleCloseHelp = () => {
