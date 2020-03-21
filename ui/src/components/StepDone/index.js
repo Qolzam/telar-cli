@@ -39,7 +39,7 @@ export default function StepDone() {
           <Typography gutterBottom variant="h5" component="h2">
             Done
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary">
           Wait until the build and deployment is done. To start login into admin page {`https://${githubUsername}.o6s.io/admin/login`}. Wait until you seen welcome page.
           Now your Telar social is ready to use!😍🏆
           - Signup page: {`https://${githubUsername}.o6s.io/auth/signup`}

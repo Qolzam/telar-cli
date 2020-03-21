@@ -77,7 +77,7 @@ export default function GoogleReCaptcha() {
       <br />
         <br />
         <Typography className={classes.title} color="textPrimary" gutterBottom>
-        Enter your valid site key and reCaptcha key
+        Enter your valid Google reCaptcha site key and secret key
         </Typography>
         <TextField
         required

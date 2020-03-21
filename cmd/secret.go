@@ -41,7 +41,7 @@ func createSecretFile(pathWD, name string, telarSecrets *TelarSecrets) error {
 	args["redis-pwd"] = telarSecrets.RedisPwd
 	args["admin-username"] = telarSecrets.AdminUsername
 	args["admin-password"] = telarSecrets.AdminPwd
-	args["payload-secret"] = telarSecrets.RecaptchaKey
+	args["payload-secret"] = telarSecrets.PayloadSecret
 	args["ref-email-pass"] = telarSecrets.RefEmailPwd
 	args["phone-auth-token"] = telarSecrets.PhoneAuthToken
 	args["phone-auth-id"] = telarSecrets.PhoneAuthId

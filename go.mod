@@ -11,6 +11,7 @@ require (
 	github.com/gobuffalo/packr v1.30.1
 	github.com/gorilla/websocket v1.4.1
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
+	github.com/karalabe/xgo v0.0.0-20191115072854-c5ccff8648a7 // indirect
 	github.com/openfaas/faas v0.0.0-20200308203816-1eea381dd5b8 // indirect
 	github.com/openfaas/faas-cli v0.0.0-20200226083118-b0a70a3f4f20
 	github.com/openfaas/faas-provider v0.15.0 // indirect

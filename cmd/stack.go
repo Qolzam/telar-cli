@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
+	"strings"
 
 	"github.com/jinzhu/copier"
 	stack "github.com/openfaas/faas-cli/stack"
@@ -39,14 +40,14 @@ func applyConfig(telarConfig TelarConfig) error {
 	fmt.Printf("\n[INFO] Applied auth config successfully %s", telarWebRepoPath)
 
 	fmt.Printf("\n[INFO] Applying storage config %s", telarWebRepoPath)
-	err = applyStorageConfig(telarWebRepoPath, telarConfig.ClientID)
+	err = applyStorageConfig(telarWebRepoPath, telarConfig.Bucket)
 	if isError(err) {
 		return err
 	}
 	fmt.Printf("\n[INFO] Applied storage config successfully %s", telarWebRepoPath)
 
 	fmt.Printf("\n[INFO] Applying ts-ui config %s", telarConfig.PathWD)
-	err = applyTSUIConfig(telarConfig.PathWD, telarConfig.WebsocketURL)
+	err = applyTSUIConfig(telarConfig.PathWD, telarConfig.WebsocketURL, telarConfig.URL)
 	if isError(err) {
 		return err
 	}
@@ -68,7 +69,7 @@ func applyAppConfig(repoPath, mongoDBHost, mongoDatabase, recaptchaSiteKey, refE
 		return err
 	}
 
-	envs["mongo_user"] = mongoDBHost
+	envs["mongo_host"] = strings.Replace(mongoDBHost, "<password>", "%s", -1)
 	envs["mongo_database"] = mongoDatabase
 	envs["recaptcha_site_key"] = recaptchaSiteKey
 	envs["ref_email"] = refEmail
@@ -195,7 +196,7 @@ func createStack(pathWD string) error {
 	return nil
 }
 
-func applyTSUIConfig(pathWD string, websocketURL string) error {
+func applyTSUIConfig(pathWD, websocketURL, gateway string) error {
 	filePath := path.Join(pathWD, "ts-ui/stack.yml")
 	stackFile, err := stack.ParseYAMLFile(filePath, "", "", false)
 	if err != nil {
@@ -206,6 +207,7 @@ func applyTSUIConfig(pathWD string, websocketURL string) error {
 		if name == "web" {
 			envs := make(map[string]string)
 			envs["websocket_url"] = websocketURL
+			envs["gateway_url"] = gateway
 			//combine all environment variables
 			allEnvironment, envErr := compileEnvironment([]string{}, function.Environment, envs)
 			if envErr != nil {

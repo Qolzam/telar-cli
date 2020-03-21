@@ -145,7 +145,7 @@ func CheckInitStep(projectPath string) {
 }
 
 func CheckIngredient(projectPath string, githubUsername string) {
-	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/1.md"
+	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/2.md"
 	echoInput("loadingCheckIngredients", true)
 
 	// Check kubeseal
@@ -306,7 +306,7 @@ func starteploy(clientInput ClientInputs) {
 		URL:              fmt.Sprintf("https://%s.o6s.io", clientInput.GithubUsername),
 		WebsocketURL:     clientInput.WebsocketURL,
 		MongoDBHost:      clientInput.MongoDBHost,
-		MongoDatabase:    clientInput.MongoDBHost,
+		MongoDatabase:    clientInput.MongoDBName,
 		RecaptchaSiteKey: clientInput.SiteKeyRecaptcha,
 		RefEmail:         clientInput.Gmail,
 	}
