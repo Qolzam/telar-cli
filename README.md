@@ -15,6 +15,7 @@
 ### Download 
 - [Mac Prerelease](https://github.com/Qolzam/telar-cli/releases/download/v0.1.0/telar-cli)
 
+
 ### Setup Options
 
 - [OpenFaaS Cloud Community Cluster](docs/ofcc-setup/README.md)
@@ -26,6 +27,12 @@
 - [Bare-metal K3S](https://github.com/Qolzam/feedback/issues/1)
 - [Local Kind](https://github.com/Qolzam/feedback/issues/1)
 - [Local Minikube](https://github.com/Qolzam/feedback/issues/1)
+
+### Video Tutorial
+[![Telar Social one-click setup: OpenFaaS Cloud Community Cluster](https://img.youtube.com/vi/VeabyuIAU_4/0.jpg)](https://www.youtube.com/watch?v=VeabyuIAU_4)
+
+### Blog Posts
+[Telar Social one-click setup: OpenFaaS Cloud Community Cluster](https://medium.com/red-gold/telar-social-one-click-setup-openfaas-cloud-community-cluster-68814b3bf47c)
 
 ## Support with buying a coffee ☕️☕️☕️
 Our top backers [Become a backer](https://www.patreon.com/qolzam)
