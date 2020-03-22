@@ -29,7 +29,7 @@
 - [Local Minikube](https://github.com/Qolzam/feedback/issues/1)
 
 ### Video Tutorial
-[![Telar Social one-click setup: OpenFaaS Cloud Community Cluster](https://img.youtube.com/vi/VeabyuIAU_4/0.jpg)](https://www.youtube.com/watch?v=VeabyuIAU_4)
+[![Telar Social one-click setup: OpenFaaS Cloud Community Cluster](https://img.youtube.com/vi/M-vjKGIvzWM/0.jpg)](https://www.youtube.com/watch?v=M-vjKGIvzWM)
 
 ### Blog Posts
 [Telar Social one-click setup: OpenFaaS Cloud Community Cluster](https://medium.com/red-gold/telar-social-one-click-setup-openfaas-cloud-community-cluster-68814b3bf47c)
