@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/Qolzam/telar-cli/cmd"
-	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/packr/v2"
 	browser "github.com/pkg/browser"
 )
 
@@ -24,7 +24,8 @@ type ActionModel struct {
 
 func main() {
 	// Bind folder path for packaging with Packr
-	folder := packr.NewBox("./ui/build")
+	folder := packr.New("telar", "./ui/build")
+	fmt.Println("[INFO] UI packed.", folder.Path)
 
 	// Handle to ./static/build folder on root path
 	http.Handle("/", http.FileServer(folder))
@@ -33,10 +34,13 @@ func main() {
 	http.HandleFunc("/ws", cmd.WsHandler)
 	http.HandleFunc("/dispatch", cmd.ClientHandler)
 	http.HandleFunc("/open-url", cmd.OpenURLHandler)
+	http.HandleFunc("/ping", cmd.PingHandler)
 
 	// Run server at port 8000 as goroutine
 	// for non-block working
 	go browser.OpenURL(fmt.Sprintf("http://localhost:%d", port))
+	fmt.Printf("\n[INFO] Server started on http://localhost:%d", port)
+
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 
 }

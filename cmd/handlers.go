@@ -106,6 +106,13 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func PingHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(fmt.Sprintf("Pong")))
+
+}
+
 func Echo(message ClientAction) {
 
 	if err := conn.WriteJSON(message); err != nil {
