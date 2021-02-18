@@ -24,7 +24,7 @@ const Footer = props => {
         &copy;{' '}
         <Link
           component="a"
-          href="https://telar.press/"
+          href="https://telar.dev/"
           target="_blank"
         >
           Telar

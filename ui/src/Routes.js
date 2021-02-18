@@ -3,12 +3,12 @@ import { Switch, Redirect } from 'react-router-dom';
 
 import { RouteWithLayout } from './components';
 import { Main as MainLayout, Minimal as MinimalLayout } from './layouts';
-
 import {
   NotFound as NotFoundView
 } from './views';
 
 import SetupComponent from './pages/Setup';
+import SettingsComponent from './pages/Settings';
 
 const Routes = () => {
   return (
@@ -23,6 +23,12 @@ const Routes = () => {
         exact
         layout={MainLayout}
         path="/setup"
+      />
+      <RouteWithLayout
+        component={SettingsComponent}
+        exact
+        layout={MainLayout}
+        path="/settings"
       />
       <RouteWithLayout
         component={NotFoundView}

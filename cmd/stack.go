@@ -54,7 +54,7 @@ func applyConfig(telarConfig TelarConfig) error {
 	fmt.Printf("\n[INFO] Applied ts-ui config successfully %s", telarConfig.PathWD)
 
 	fmt.Printf("\n[INFO] Create all stack config %s", telarConfig.PathWD)
-	err = createAllStacks(telarConfig.PathWD)
+	err = createAllStacks(telarConfig.PathWD, telarConfig.SecretName, telarConfig.AppID)
 	if isError(err) {
 		return err
 	}
@@ -143,43 +143,99 @@ func applyAuthConfig(repoPath string, clientID string) error {
 	return nil
 }
 
-func createAllStacks(pathWD string) error {
+func createAllStacks(pathWD, secretName, appID string) error {
 	for _, repo := range []string{"ts-serverless", "telar-web"} {
 
-		fmt.Printf("\n[INFO] Create stack config %s", pathWD+"/"+repo)
-		err := createStack(pathWD + "/" + repo)
+		stackPath := path.Join(pathWD, repo)
+		fmt.Printf("\n[INFO] Create stack config %s", stackPath)
+		err := createStack(stackPath, secretName, repo, appID)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("\n[INFO] Stack config created successfully  %s", pathWD+"/"+repo)
+		fmt.Printf("\n[INFO] Stack yaml file created successfully  %s", stackPath)
 	}
+
+	tsuiStackPath := path.Join(pathWD, "ts-ui")
+	err := createTSUIStack(tsuiStackPath, "ts-ui", appID)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("\n[INFO] Stack yaml file created successfully  %s", tsuiStackPath)
 	return nil
 }
 
-func createStack(pathWD string) error {
+func createStack(pathWD, secretName, repo, appID string) error {
 
-	fmt.Printf("Current address: %s \n", pathWD)
+	fmt.Printf("[INFO] Creating stack.yml file: %s \n", pathWD)
 	stackFile, _ := stack.ParseYAMLFile(path.Join(pathWD, "stack-init.yml"), "", "", false)
-	fmt.Printf("\n%v", stackFile)
+	sha, err := gitShortSHA(pathWD)
+	if err != nil {
+		return err
+	}
 	for name, function := range stackFile.Functions {
 		fmt.Printf("\n%v", name)
 		fmt.Printf("\n%v", function)
 
-		// Read environment variables from the file
-		fileEnvironment, err := readFiles(function.EnvironmentFile, pathWD)
-		if err != nil {
-			return err
-		}
-		// Combine all environment variables
-		allEnvironment, envErr := compileEnvironment([]string{}, function.Environment, fileEnvironment)
-		if envErr != nil {
-			return envErr
-		}
-
 		// Set environments
 		newFuncs := stack.Function{}
 		copier.Copy(&newFuncs, stackFile.Functions[name])
-		newFuncs.Environment = allEnvironment
+		newFuncs.Secrets = []string{secretName}
+		newLabels := make(map[string]string)
+		newLabels[FunctionLabelPrefix+"repo"] = repo
+		newLabels[FunctionLabelPrefix+"appID"] = appID
+		mergedLables := mergeMap(newLabels, *newFuncs.Labels)
+		newFuncs.Labels = &mergedLables
+		newFuncs.Image = formatImageShaTag(REGISTRY_URL, &newFuncs, sha, TELAR_GITHUB_USER_NAME, repo)
+		stackFile.Functions[name] = newFuncs
+	}
+
+	d, err := yaml.Marshal(&stackFile)
+	if err != nil {
+		return err
+	}
+
+	errWrite := ioutil.WriteFile(path.Join(pathWD, "stack.yml"), d, 0644)
+	if errWrite != nil {
+		return err
+	}
+	return nil
+}
+
+func createTSUIStack(pathWD, repo, appID string) error {
+
+	fmt.Printf("[INFO] Creating stack.yml file: %s \n", pathWD)
+	var stackFile *stack.Services
+	err, stackInitExist := directoryFileExist(path.Join(pathWD, "stack-init.yml"))
+	if stackInitExist {
+		stackFile, _ = stack.ParseYAMLFile(path.Join(pathWD, "stack-init.yml"), "", "", false)
+
+	} else {
+		stackFile, _ = stack.ParseYAMLFile(path.Join(pathWD, "stack.yml"), "", "", false)
+		d, err := yaml.Marshal(&stackFile)
+		if err != nil {
+			return err
+		}
+		errWrite := ioutil.WriteFile(path.Join(pathWD, "stack-init.yml"), d, 0644)
+		if errWrite != nil {
+			return err
+		}
+	}
+	sha, err := gitShortSHA(pathWD)
+	if err != nil {
+		return err
+	}
+	for name, function := range stackFile.Functions {
+		fmt.Printf("\n%v", name)
+		fmt.Printf("\n%v", function)
+		// Set environments
+		newFuncs := stack.Function{}
+		copier.Copy(&newFuncs, stackFile.Functions[name])
+		newLabels := make(map[string]string)
+		newLabels[FunctionLabelPrefix+"repo"] = repo
+		newLabels[FunctionLabelPrefix+"appID"] = appID
+		mergedLables := mergeMap(newLabels, *newFuncs.Labels)
+		newFuncs.Image = formatImageShaTag(REGISTRY_URL, &newFuncs, sha, TELAR_GITHUB_USER_NAME, repo)
+		newFuncs.Labels = &mergedLables
 
 		stackFile.Functions[name] = newFuncs
 	}

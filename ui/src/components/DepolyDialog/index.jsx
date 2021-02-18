@@ -49,7 +49,6 @@ export default function DeployDialog(props) {
 
   const loadingStackYaml = useSelector(state => state['inputs']['loadingStackYaml'])
   const loadingCreateSecret = useSelector(state => state['inputs']['loadingCreateSecret'])
-  const loadingPublicPrivateKey = useSelector(state => state['inputs']['loadingPublicPrivateKey'])
   const deployTelarWeb = useSelector(state => state['inputs']['deployTelarWeb'])
   const deployTsServerless = useSelector(state => state['inputs']['deployTsServerless'])
   const deploySocialUi = useSelector(state => state['inputs']['deploySocialUi'])
@@ -76,7 +75,7 @@ export default function DeployDialog(props) {
         <DialogTitle id="alert-dialog-title">{"Deploying"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Deploying the project to OpenFaaS Cloud Community Cluster
+            Deploying the project to OpenFaaS
           </DialogContentText>
             <FormControl component="fieldset" className={classes.formControl}>
             <FormGroup>
@@ -92,12 +91,6 @@ export default function DeployDialog(props) {
               control={checkBox(loadingCreateSecret)}
               checked={loadingCreateSecret}
               label="Creating Secrets"
-            />
-
-            <FormControlLabel
-              control={checkBox(loadingPublicPrivateKey)}
-              checked={loadingPublicPrivateKey}
-              label="Deploying Telar Web"
             />
 
             <FormControlLabel

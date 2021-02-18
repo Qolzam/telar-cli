@@ -19,7 +19,7 @@ const Footer = props => {
   const handleTelarLink = (event) => {
 
     event.preventDefault()
-    services.openURL('https://telar.press/')
+    services.openURL('https://telar.dev/')
   }
 
   return (

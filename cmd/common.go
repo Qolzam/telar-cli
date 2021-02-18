@@ -4,6 +4,7 @@ package cmd
 // This script was adapted from https://github.com/openfaas/faas-cli/blob/master/commands
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -12,6 +13,7 @@ import (
 	"os/exec"
 	"os/user"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -26,20 +28,24 @@ var (
 )
 
 const (
-	OFCC_DOMAIN = ".o6s.io"
+	TELAR_GITHUB_USER_NAME = "telarpress"
+	IMAGE_OWNER            = "telar"
+	REGISTRY_URL           = "docker.io/telar/"
 
 	// Client Actions
-	SET_SETUP_STATE    = "SET_SETUP_STATE"
-	SET_SETUP_STEP     = "SET_SETUP_STEP"
-	SET_INPUT          = "SET_INPUT"
-	SET_DEPLOY_OPEN    = "SET_DEPLOY_OPEN"
-	POP_MESSAGE        = "POP_MESSAGE"
-	SET_STEP_CONDITION = "SET_STEP_CONDITION"
-	SHOW_INFO_DIALOG   = "SHOW_INFO_DIALOG"
+	SET_SETUP_STATE          = "SET_SETUP_STATE"
+	SET_SETUP_STEP           = "SET_SETUP_STEP"
+	SET_INPUT                = "SET_INPUT"
+	SET_DEPLOY_OPEN          = "SET_DEPLOY_OPEN"
+	SET_SETUP_DEFAULT_VALUES = "SET_SETUP_DEFAULT_VALUES"
+	POP_MESSAGE              = "POP_MESSAGE"
+	SET_STEP_CONDITION       = "SET_STEP_CONDITION"
+	SHOW_INFO_DIALOG         = "SHOW_INFO_DIALOG"
 
 	// Server HTTP Actions
-	START_STEP = "START_STEP"
-	CHECK_STEP = "CHECK_STEP"
+	START_STEP                 = "START_STEP"
+	REMOVE_SOCIAL_FROM_CLUSTER = "REMOVE_SOCIAL_FROM_CLUSTER"
+	CHECK_STEP                 = "CHECK_STEP"
 )
 
 type TelarSecrets struct {
@@ -62,26 +68,34 @@ type ClientState struct {
 }
 
 type ClientInputs struct {
-	GithubUsername      string `json:"githubUsername"`
-	ProjectDirectory    string `json:"projectDirectory"`
-	BucketName          string `json:"bucketName"`
-	MongoDBHost         string `json:"mongoDBHost"`
-	MongoDBPassword     string `json:"mongoDBPassword"`
-	MongoDBName         string `json:"mongoDBName"`
-	SiteKeyRecaptcha    string `json:"siteKeyRecaptcha"`
-	RecaptchaKey        string `json:"recaptchaKey"`
-	GithubOAuthSecret   string `json:"githubOAuthSecret"`
-	GithubOAuthClientID string `json:"githubOAuthClientID"`
-	AdminUsername       string `json:"adminUsername"`
-	AdminPassword       string `json:"adminPassword"`
-	Gmail               string `json:"gmail"`
-	GmailPassword       string `json:"gmailPassword"`
-	Gateway             string `json:"gateway"`
-	PayloadSecret       string `json:"payloadSecret"`
-	WebsocketURL        string `json:"websocketURL"`
+	AppID               string `json:"appID"  yaml:"appID,omitempty"`
+	OFUsername          string `json:"ofUsername"  yaml:"ofUsername,omitempty"`
+	OFGateway           string `json:"ofGateway"  yaml:"ofGateway,omitempty"`
+	SocialDomain        string `json:"socialDomain"  yaml:"socialDomain,omitempty"`
+	SecretName          string `json:"secretName"  yaml:"secretName,omitempty"`
+	Namespace           string `json:"namespace"  yaml:"namespace,omitempty"`
+	KubeconfigPath      string `json:"kubeconfigPath"  yaml:"kubeconfigPath,omitempty"`
+	ProjectDirectory    string `json:"projectDirectory"  yaml:"projectDirectory,omitempty"`
+	BucketName          string `json:"bucketName"  yaml:"bucketName,omitempty"`
+	MongoDBHost         string `json:"mongoDBHost"  yaml:"mongoDBHost,omitempty"`
+	MongoDBPassword     string `json:"mongoDBPassword"  yaml:"mongoDBPassword,omitempty"`
+	MongoDBName         string `json:"mongoDBName"  yaml:"mongoDBName,omitempty"`
+	SiteKeyRecaptcha    string `json:"siteKeyRecaptcha"  yaml:"siteKeyRecaptcha,omitempty"`
+	RecaptchaKey        string `json:"recaptchaKey"  yaml:"recaptchaKey,omitempty"`
+	GithubOAuthSecret   string `json:"githubOAuthSecret"  yaml:"githubOAuthSecret,omitempty"`
+	GithubOAuthClientID string `json:"githubOAuthClientID"  yaml:"githubOAuthClientID,omitempty"`
+	AdminUsername       string `json:"adminUsername"  yaml:"adminUsername,omitempty"`
+	AdminPassword       string `json:"adminPassword"  yaml:"adminPassword,omitempty"`
+	Gmail               string `json:"gmail"  yaml:"gmail,omitempty"`
+	GmailPassword       string `json:"gmailPassword"  yaml:"gmailPassword,omitempty"`
+	Gateway             string `json:"gateway"  yaml:"gateway,omitempty"`
+	PayloadSecret       string `json:"payloadSecret"  yaml:"payloadSecret,omitempty"`
+	WebsocketURL        string `json:"websocketURL"  yaml:"websocketURL,omitempty"`
 }
 
 type TelarConfig struct {
+	AppID            string `json:"ppID"`
+	SecretName       string `json:"secretName"`
 	GithubUsername   string `json:"githubUsername"`
 	PathWD           string `json:"pathWD"`
 	CoockieDomain    string `json:"coockieDomain"`
@@ -264,6 +278,17 @@ func checkDirectory(dir string) bool {
 	return false
 }
 
+func directoryFileExist(dir string) (error, bool) {
+	if _, err := os.Stat(dir); err != nil {
+		if os.IsNotExist(err) {
+			return nil, false
+		} else {
+			return err, true
+		}
+	}
+	return nil, true
+}
+
 func writeYamlFile(path string, yamlData interface{}) error {
 	data, err := yaml.Marshal(yamlData)
 	if err != nil {
@@ -346,6 +371,104 @@ func preparePublicPrivateKey(path string) error {
 	err = createPublicKey(path)
 	if isError(err) {
 		return err
+	}
+	return nil
+}
+
+// To provide input to the pipeline, assign an io.Reader to the first's Stdin.
+func Pipeline(cmds ...*exec.Cmd) (pipeLineOutput, collectedStandardError []byte, pipeLineError error) {
+	// Require at least one command
+	if len(cmds) < 1 {
+		return nil, nil, nil
+	}
+
+	// Collect the output from the command(s)
+	var output bytes.Buffer
+	var stderr bytes.Buffer
+
+	last := len(cmds) - 1
+	for i, cmd := range cmds[:last] {
+		var err error
+		// Connect each command's stdin to the previous command's stdout
+		if cmds[i+1].Stdin, err = cmd.StdoutPipe(); err != nil {
+			return nil, nil, err
+		}
+		// Connect each command's stderr to a buffer
+		cmd.Stderr = &stderr
+	}
+
+	// Connect the output and error for the last command
+	cmds[last].Stdout, cmds[last].Stderr = &output, &stderr
+
+	// Start each command
+	for _, cmd := range cmds {
+		if err := cmd.Start(); err != nil {
+			return output.Bytes(), stderr.Bytes(), err
+		}
+	}
+
+	// Wait for each command to complete
+	for _, cmd := range cmds {
+		if err := cmd.Wait(); err != nil {
+			return output.Bytes(), stderr.Bytes(), err
+		}
+	}
+
+	// Return the pipeline output and the collected standard error
+	return output.Bytes(), stderr.Bytes(), nil
+}
+
+func kubectlCreateSecret(path, name, namespace string, kubeConfigPath *string, args map[string]string, files []string) error {
+
+	cmdArgs := []string{"kubectl", "-n", namespace, "create", "secret", "generic", name,
+		"--save-config", "--dry-run=client"}
+	for k, v := range args {
+		newArg := fmt.Sprintf("--from-literal='%s=%s'", k, v)
+		cmdArgs = append(cmdArgs, newArg)
+	}
+	for _, v := range files {
+		newArg := fmt.Sprintf("--from-file='%s'", v)
+		cmdArgs = append(cmdArgs, newArg)
+	}
+	cmdArgs = append(cmdArgs, "-o yaml")
+	cmdBash := fmt.Sprintf("cd %s; %s;", path, strings.Join(cmdArgs[:], " "))
+	if kubeConfigPath != nil {
+		cmdExportKubeConfig := fmt.Sprintf("export KUBECONFIG=%s", *kubeConfigPath)
+		cmdBash = fmt.Sprintf("cd %s; %s; %s;", path, cmdExportKubeConfig, strings.Join(cmdArgs[:], " "))
+
+	}
+	fmt.Println("[INFO] Create secret final command ", cmdBash)
+	cmd := exec.Command("/bin/sh", "-c", cmdBash)
+	secretFileName := fmt.Sprintf("%s-%s.yml", namespace, name)
+	secretsYamlPath := filepath.Join(path, secretFileName)
+	outfile, err := os.Create(secretsYamlPath)
+	if err != nil {
+		return fmt.Errorf("Can not create file in path %s, error: %s", secretsYamlPath, err.Error())
+	}
+	defer outfile.Close()
+	cmd.Stdout = outfile
+
+	err = cmd.Start()
+	if err != nil {
+		return err
+	}
+	cmd.Wait()
+	return nil
+}
+
+func kubectlApplyFile(path string, kubeConfigPath *string) error {
+	cmdApply := "kubectl apply -f " + path
+	cmdBash := fmt.Sprintf("%s;", cmdApply)
+	if kubeConfigPath != nil {
+		cmdExportKubeConfig := fmt.Sprintf("export KUBECONFIG=%s", *kubeConfigPath)
+		cmdBash = fmt.Sprintf("%s; %s;", cmdExportKubeConfig, cmdApply)
+
+	}
+	fmt.Println("[INFO] Kubectl apply final command ", cmdBash)
+	out, err := exec.Command("/bin/sh", "-c", cmdBash).CombinedOutput()
+
+	if isError(err) {
+		return fmt.Errorf("%s - %s", err.Error(), string(out))
 	}
 	return nil
 }

@@ -18,6 +18,8 @@ const initialState = {
         return {...state, inputs: {...state.inputs, [payload.key]: payload.value}}
       case actionTypes.SET_DEPLOY_OPEN:
         return {...state, deployOpen: payload.open}
+      case actionTypes.SET_SETUP_DEFAULT_VALUES:
+        return {...state, inputs: {...state.inputs, ...payload.clientInputs}}
       case actionTypes.POP_MESSAGE:
         return {...state, popMessage: payload.message}
       case actionTypes.SHOW_INFO_DIALOG:

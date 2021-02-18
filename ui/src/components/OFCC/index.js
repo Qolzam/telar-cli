@@ -6,9 +6,8 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import GithubUsername from '../InitialStep';
+import InitialStep from '../InitialStep';
+import OFCInfo from '../OFCInfo';
 import CheckIngredients from '../CheckIngredients';
 import FirebaseStorage from '../FirebaseStorage';
 import UserManagement from '../UserManagement';
@@ -38,6 +37,7 @@ const useStyles = makeStyles(theme => ({
 function getSteps() {
   return [
   `Let's start`, 
+  `General settings`, 
   'Check ingredients', 
   'Firebase Storage', 
   'MongoDB', 
@@ -51,20 +51,22 @@ function getSteps() {
 function getStepContent(step) {
   switch (step) {
     case 0:
-      return <GithubUsername />;
+      return <InitialStep />;
     case 1:
-      return  <CheckIngredients />;
+      return <OFCInfo />;
     case 2:
-      return  <FirebaseStorage />;
+      return  <CheckIngredients />;
     case 3:
-      return  <Database />;
+      return  <FirebaseStorage />;
     case 4:
-      return  <GoogleReCaptcha />;
+      return  <Database />;
     case 5:
-      return  <OAuth />;
+      return  <GoogleReCaptcha />;
     case 6:
-      return  <UserManagement />;
+      return  <OAuth />;
     case 7:
+      return  <UserManagement />;
+    case 8:
       return  <WebSocket />;
     default:
       return 'Unknown step';
@@ -115,28 +117,31 @@ export default function OFCC() {
  const state = useSelector(state =>  state) 
 
   // Init step
-  stepCondition[0]= (validInputs(state, ['githubUsername','projectDirectory']))
+  stepCondition[0]= (validInputs(state, ['projectDirectory']))
+
+  // Init step
+  stepCondition[1]= (validInputs(state, ['appID','ofGateway', 'ofUsername', 'socialDomain', 'secretName', 'namespace']))
   
   // Check ingredients
-  stepCondition[1] =(validCheckbox(state, ['openFaaSApp', 'openFaaSAppHasRepos', 'githubSSHKey' ]) && !validCheckbox(state,['loadingCheckIngredients']))
+  stepCondition[2] = !validCheckbox(state,['loadingCheckIngredients'])
 
   // Firebase storage
-  stepCondition[2] = (!validCheckbox(state, ['loadingFirebaseStorage'] ) && validInputs(state, ['bucketName']) === true)
+  stepCondition[3] = (!validCheckbox(state, ['loadingFirebaseStorage'] ) && validInputs(state, ['bucketName']) === true)
 
   // Database
-  stepCondition[3] = (!validCheckbox(state, ['loadingMongoDB'] ) && validInputs(state, ['mongoDBHost', 'mongoDBPassword', 'mongoDBName']) === true)
+  stepCondition[4] = (!validCheckbox(state, ['loadingMongoDB'] ) && validInputs(state, ['mongoDBHost', 'mongoDBPassword', 'mongoDBName']) === true)
 
   // Firebase storage
-  stepCondition[4] = (validInputs(state, ['siteKeyRecaptcha', 'recaptchaKey']))
+  stepCondition[5] = (validInputs(state, ['siteKeyRecaptcha', 'recaptchaKey']))
 
   // OAuth
-  stepCondition[5] = (validInputs(state, ['githubOAuthSecret']))
+  stepCondition[6] = (validInputs(state, ['githubOAuthSecret']))
 
   // User management
-  stepCondition[6] = (validInputs(state, ['adminUsername', 'adminPassword', 'gmail', 'gmailPassword']))
+  stepCondition[7] = (validInputs(state, ['adminUsername', 'adminPassword', 'gmail', 'gmailPassword']))
 
   // Websocket
-  stepCondition[7] = ((!validCheckbox(state, ['loadingWebsocket'] ) || validCheckbox(state, ['websocketConnection'] )) && validInputs(state, ['gateway', 'payloadSecret', 'websocketURL']) === true)
+  stepCondition[8] = ((!validCheckbox(state, ['loadingWebsocket'] ) || validCheckbox(state, ['websocketConnection'] )) && validInputs(state, ['gateway', 'payloadSecret', 'websocketURL']) === true)
 
   const handleCloseDeploy = () => {
     dispatch(actions.setInput('deployOpen', false))

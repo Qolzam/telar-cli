@@ -106,14 +106,11 @@ export default function Websocket() {
       <br />
         <br />
       <Typography className={classes.title} color="textPrimary" gutterBottom>
-       Enter bucket name and download service account file in project directory
+       Enter Websocket server information and telar server gateway
         </Typography>
        
         <TextField
-        InputProps={{
-          readonly: true,
-        }}
-        id="outlined-required"
+        onChange={handleChange('gateway')}
         label="Gateway"
         value={gateway}
         variant="outlined"
@@ -124,7 +121,6 @@ export default function Websocket() {
         InputProps={{
           readonly: true,
         }}
-        id="outlined-required"
         label="Payload Secret"
         value={payloadSecret}
         variant="outlined"
@@ -134,7 +130,6 @@ export default function Websocket() {
         <TextField
         required
         onChange={handleChange('websocketURL')}
-        id="outlined-required"
         label="Websocket URL"
         value={websocketURL}
         variant="outlined"

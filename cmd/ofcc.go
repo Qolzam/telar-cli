@@ -3,10 +3,20 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
+	"net/url"
+	"path"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
+const SETUP_YAML_FILE_NAME = "setup.yml"
+
+type OFCSetupCache struct {
+	ClientInputs ClientInputs `json:"clientInputs" yaml:"clientInputs,omitempty"`
+}
 type ClientAction struct {
 	Type    string      `json:"type"`
 	Payload interface{} `json:"payload"`
@@ -68,6 +78,10 @@ func echoOpenDeploy(open bool) {
 	)
 }
 
+func echoSetupDefaultValues(payload *OFCSetupCache) {
+	echoClient(SET_SETUP_DEFAULT_VALUES, *payload)
+}
+
 func echoSetupState(state string) {
 	echoClient(SET_SETUP_STATE,
 		struct {
@@ -116,14 +130,14 @@ func checkCustomers(customer string) error {
 		if strings.Contains(customers, customer) {
 			return nil
 		} else {
-			return fmt.Errorf("The %s user is not registered in OpenFaaS Cloud CUSTOMERS https://raw.githubusercontent.com/openfaas/openfaas-cloud/master/CUSTOMERS", customers)
+			return fmt.Errorf("The %s user is not registered in OpenFaaS CUSTOMERS https://raw.githubusercontent.com/openfaas/openfaas-cloud/master/CUSTOMERS", customers)
 		}
 	}
-	return fmt.Errorf("Unkown error when checking %s for OpenFaaS Cloud CUSTOMERS ", customer)
+	return fmt.Errorf("Unkown error when checking %s for OpenFaaS CUSTOMERS ", customer)
 }
 
-func getOFCCGateway(githubUsername string) string {
-	url := fmt.Sprintf("https://%s.o6s.io", githubUsername)
+func getOFCCGateway(ofGateway string) string {
+	url := fmt.Sprintf("https://%s", ofGateway)
 	return url
 }
 
@@ -140,36 +154,27 @@ func StartStep() {
 
 func CheckInitStep(projectPath string) {
 	_ = checkDirectory(projectPath)
+
+	setupCache, err := getSetupYaml(projectPath)
+	if err != nil {
+		fmt.Printf("\n[WARN] can not get setup cache. %s", err.Error())
+	} else {
+		echoSetupDefaultValues(setupCache)
+	}
 	echoStep(1)
 
 }
 
+func OFCAccessSetting() {
+
+	echoStep(2)
+}
 func CheckIngredient(projectPath string, githubUsername string) {
 	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/2.md"
 	echoInput("loadingCheckIngredients", true)
 
-	// Check kubeseal
-	err := checkKubeseal()
-	if isError(err) {
-		echoDialogInfo(err.Error(), helpURL)
-		echoInput("loadingCheckIngredients", false)
-		fmt.Println(err.Error())
-		return
-	}
-	echoInput("installKubeseal", true)
-
-	// Check github username is registered in OpenFaaS Cloud CUSTOMERS
-	err = checkCustomers(githubUsername)
-	if isError(err) {
-		echoDialogInfo(fmt.Sprintf("Github user name [%s] is not registered in OpenFaaS Cloud Community Cluster. Please check if you have typo.", githubUsername), helpURL)
-		echoInput("loadingCheckIngredients", false)
-		fmt.Println(err.Error())
-		return
-	}
-	echoInput("githubUsernameRegisterd", true)
-
 	// Check telar-web repository
-	err = cloneTelarWeb(projectPath, githubUsername)
+	err := cloneTelarWeb(projectPath, githubUsername)
 	if isError(err) && err.Error() != "repository already exists" {
 		errMessage := "telar-web " + err.Error()
 
@@ -207,7 +212,7 @@ func CheckIngredient(projectPath string, githubUsername string) {
 	}
 	echoInput("cloneTsUi", true)
 
-	echoStep(2)
+	echoStep(3)
 }
 
 func CheckStorage(projectPath string, bucketName string) {
@@ -234,7 +239,7 @@ func CheckStorage(projectPath string, bucketName string) {
 	}
 	echoInput("firebaseStorage", true)
 
-	echoStep(3)
+	echoStep(4)
 
 }
 
@@ -252,19 +257,19 @@ func CheckDatabase(mongoDBHost, MongoDBPassword string) {
 	}
 	echoInput("mongoDBConnection", true)
 
-	echoStep(4)
+	echoStep(5)
 
 }
 
 func CheckRecaptcha() {
-	echoStep(5)
-}
-
-func CheckOAuth() {
 	echoStep(6)
 }
 
-func CheckUserManagement(githubUsername string) {
+func CheckOAuth() {
+	echoStep(7)
+}
+
+func CheckUserManagement(ofGateway string) {
 	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/7.md"
 
 	payloadSecret, err := generatePayloadSecret()
@@ -274,8 +279,8 @@ func CheckUserManagement(githubUsername string) {
 		return
 	}
 	echoInput("payloadSecret", payloadSecret)
-	echoInput("gateway", fmt.Sprintf("https://%s.o6s.io", githubUsername))
-	echoStep(7)
+	echoInput("gateway", ofGateway)
+	echoStep(8)
 }
 
 func CheckWebsocket(clientInput ClientInputs) {
@@ -296,14 +301,20 @@ func CheckWebsocket(clientInput ClientInputs) {
 func starteploy(clientInput ClientInputs) {
 	echoOpenDeploy(true)
 
+	parsedURL, err := url.Parse(clientInput.SocialDomain)
+	host, _, _ := net.SplitHostPort(parsedURL.Host)
+	fmt.Println("[INFO] Host: ", host)
+
 	// Apply stack
 	telarConfig := TelarConfig{
-		GithubUsername:   clientInput.GithubUsername,
+		AppID:            clientInput.AppID,
+		SecretName:       clientInput.SecretName,
+		GithubUsername:   TELAR_GITHUB_USER_NAME,
 		PathWD:           clientInput.ProjectDirectory,
-		CoockieDomain:    ".o6s.io",
+		CoockieDomain:    "." + host,
 		Bucket:           clientInput.BucketName,
 		ClientID:         clientInput.GithubOAuthClientID,
-		URL:              fmt.Sprintf("https://%s.o6s.io", clientInput.GithubUsername),
+		URL:              clientInput.SocialDomain,
 		WebsocketURL:     clientInput.WebsocketURL,
 		MongoDBHost:      clientInput.MongoDBHost,
 		MongoDatabase:    clientInput.MongoDBName,
@@ -311,7 +322,7 @@ func starteploy(clientInput ClientInputs) {
 		RefEmail:         clientInput.Gmail,
 	}
 
-	err := applyConfig(telarConfig)
+	err = applyConfig(telarConfig)
 	if isError(err) {
 		echoDialogInfo(err.Error(), "")
 		echoOpenDeploy(false)
@@ -319,14 +330,6 @@ func starteploy(clientInput ClientInputs) {
 		return
 	}
 	echoInput("loadingStackYaml", true)
-
-	err = downloadOFCCPublicKey(telarConfig.PathWD)
-	if isError(err) {
-		echoDialogInfo(err.Error(), "")
-		echoOpenDeploy(false)
-		fmt.Println(err.Error())
-		return
-	}
 
 	err = preparePublicPrivateKey(clientInput.ProjectDirectory)
 	if isError(err) {
@@ -350,7 +353,13 @@ func starteploy(clientInput ClientInputs) {
 		PhoneAuthId:    "nil",
 		PhoneAuthToken: "nil",
 	}
-	err = prepareSecret(clientInput.ProjectDirectory, clientInput.GithubUsername, telarSecret)
+
+	var kubeconfigPath *string
+	if clientInput.KubeconfigPath != "" {
+		kubeconfigPath = &clientInput.KubeconfigPath
+	}
+
+	err = prepareSecret(clientInput.ProjectDirectory, clientInput.SecretName, clientInput.Namespace, kubeconfigPath, telarSecret)
 	if isError(err) {
 		echoDialogInfo(err.Error(), "")
 		echoOpenDeploy(false)
@@ -360,34 +369,68 @@ func starteploy(clientInput ClientInputs) {
 	echoInput("loadingCreateSecret", true)
 
 	// Deploy Telar Web
-	err = gitDeploy(clientInput.ProjectDirectory + "/telar-web")
+	openfaasPass, err := getOpenFaasPass()
 	if isError(err) {
 		echoDialogInfo(err.Error(), "")
 		echoOpenDeploy(false)
 		fmt.Println(err.Error())
 		return
 	}
-	echoInput("deployTelarWeb", true)
 
-	// Deploy Telar Social Serverless
-	err = gitDeploy(clientInput.ProjectDirectory + "/ts-serverless")
+	authConf, _, err := runFaaSLogin(clientInput.OFGateway, clientInput.OFUsername, openfaasPass, false)
 	if isError(err) {
 		echoDialogInfo(err.Error(), "")
 		echoOpenDeploy(false)
 		fmt.Println(err.Error())
 		return
 	}
-	echoInput("deployTsServerless", true)
 
-	// Deploy Telar Social UI
-	err = gitDeploy(clientInput.ProjectDirectory + "/ts-ui")
-	if isError(err) {
-		echoDialogInfo(err.Error(), "")
-		echoOpenDeploy(false)
-		fmt.Println(err.Error())
-		return
+	deploySignalName := make(map[string]string)
+	deploySignalName["telar-web"] = "deployTelarWeb"
+	deploySignalName["ts-serverless"] = "deployTsServerless"
+	deploySignalName["ts-ui"] = "deploySocialUi"
+
+	for _, microName := range []string{"telar-web", "ts-serverless", "ts-ui"} {
+		microPath := path.Join(clientInput.ProjectDirectory, microName)
+		if microName != "ts-ui" {
+			faasPullGoTemplate(microPath)
+		} else {
+			faasPullNodeTemplate(microPath)
+		}
+		fmt.Printf("\n[INFO] Deploying %s function on OpenFaaS using %s gateway", microName, clientInput.OFGateway)
+		err = faasDeploy(microPath, clientInput.OFGateway, authConf.Token)
+		if isError(err) {
+			echoDialogInfo(err.Error(), "")
+			echoOpenDeploy(false)
+			fmt.Println(err.Error())
+			return
+		}
+		echoInput(deploySignalName[microName], true)
+		fmt.Printf("\n[INFO] %s deployed!", microName)
 	}
-	echoInput("deploySocialUi", true)
 	echoSetupState("done")
 
+}
+
+func getSetupYaml(projectPath string) (*OFCSetupCache, error) {
+	filePath := path.Join(projectPath, SETUP_YAML_FILE_NAME)
+	fmt.Println("[INFO] Reading setup cache from ", filePath)
+
+	bytesOut, readErr := ioutil.ReadFile(filePath)
+	if readErr != nil {
+		return nil, readErr
+	}
+
+	cacheData := ClientInputs{}
+	unmarshalErr := yaml.Unmarshal(bytesOut, &cacheData)
+	if unmarshalErr != nil {
+		return nil, unmarshalErr
+	}
+
+	return &OFCSetupCache{ClientInputs: cacheData}, nil
+}
+
+func writeSetupCache(projectPath string, clientInputs ClientInputs) {
+	filePath := path.Join(projectPath, SETUP_YAML_FILE_NAME)
+	writeYamlFile(filePath, &clientInputs)
 }

@@ -22,7 +22,12 @@ const browserHistory = createBrowserHistory();
 
 const store = configureAppStore({
   inputs: {
-    githubUsername: "",
+    appID: 'my-social-network',
+    ofUsername: 'admin',
+    ofGateway: 'openfaas.example.com',
+    socialDomain: 'https://mysocial.com',
+    secretName: 'secrets',
+    namespace: 'openfaas-fn',
     projectDirectory: "",
     bucketName: "",
     mongoDBHost: "",
@@ -41,7 +46,6 @@ const store = configureAppStore({
     websocketURL: "",
     installGit: false,
     installKubeseal: false,
-    githubUsernameRegisterd: false,
     cloneTelarWeb: false,
     cloneTsServerless: false,
     cloneTsUi: false,
@@ -76,7 +80,7 @@ if (window.WebSocket === undefined) {
 }
 
 function initWS() {
-    let socket = new WebSocket("ws://localhost:8000/ws")
+    let socket = new WebSocket("ws://localhost:31115/ws")
      
     socket.onopen = function() {
        store.dispatch(actions.popMessage("Ready!"))

@@ -1,4 +1,4 @@
-# Telar CLI - Setup Telar Social on OpenFaaS Cloud Community Cluster (Free Tier)
+# Telar CLI - Setup Telar Social on OpenFaaS (Free Tier)
 
 ### [Step 1 (Let's start)](1.md)
 

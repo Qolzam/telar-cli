@@ -21,10 +21,10 @@ const useStyles = makeStyles({
 
 export default function StepDone() {
   const classes = useStyles();
-  const githubUsername = useSelector(state => state['inputs']['githubUsername'])
+  const socialDomain = useSelector(state => state['inputs']['socialDomain'])
 
   const handleLearnMore = () => {
-    services.openURL("https://telar.press")
+    services.openURL("https://telar.dev")
   }
 
   return (
@@ -40,10 +40,10 @@ export default function StepDone() {
             Done
           </Typography>
           <Typography variant="body2" color="textSecondary">
-          Wait until the build and deployment is done. To start login into admin page {`https://${githubUsername}.o6s.io/admin/login`}. Wait until you seen welcome page.
+          Wait until the build and deployment is done. To start login into admin page {`${socialDomain}/admin/login`}. Wait until you seen welcome page.
           Now your Telar social is ready to use!😍🏆
-          - Signup page: {`https://${githubUsername}.o6s.io/auth/signup`}
-          - Login page: {`https://${githubUsername}.o6s.io/auth/login`}
+          - Signup page: {`${socialDomain}/auth/signup`}
+          - Login page: {`${socialDomain}/auth/login`}
           </Typography>
         </CardContent>
       </CardActionArea>
