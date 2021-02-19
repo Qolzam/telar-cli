@@ -36,7 +36,6 @@ export default function InitialStep() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
   const dispatch = useDispatch()
-  const githubUsername = useSelector(state => state['inputs']['githubUsername'])
   const projectDirectory = useSelector(state => state['inputs']['projectDirectory'])
   const handleInputChange = (name) => (event) => {
     const {value} = event.currentTarget
@@ -60,7 +59,7 @@ export default function InitialStep() {
     <Card className={classes.root} variant="outlined">
     <CardContent>
       <Typography variant={'h5'} color="textPrimary" gutterBottom>
-      In this step you need to enter your Github account username and a directory path where you want to keep Telar Social project source code. 
+      In this step you need to enter your Domain that can access to OpenFaaS gateway and a directory path where you want to keep your project source code. 
   </Typography>
   <br/>
     </CardContent>
@@ -78,18 +77,8 @@ export default function InitialStep() {
         <br />
         <br />
         <Typography className={classes.title} color="textPrimary" gutterBottom>
-          Enter your valid Github user name.
+          Enter your project directory
         </Typography>
-        <TextField
-          required
-          id="outlined-required"
-          label="Github Username"
-          onChange={handleInputChange('githubUsername')}
-          value={githubUsername}
-          variant="outlined"
-        />
-        <br />
-        <br />
         <TextField
           className={classes.address}
           fullWidth

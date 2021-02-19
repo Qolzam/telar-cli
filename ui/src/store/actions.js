@@ -37,6 +37,13 @@ const setDeployOpen = (open) => {
     }
 }
 
+const setSetupDefaultValues = (payload) => {
+    return {
+        type: actionTypes.SET_SETUP_DEFAULT_VALUES,
+        payload
+    }
+}
+
 const popMessage = (message) => {
     return {
         type: actionTypes.POP_MESSAGE,
@@ -67,6 +74,13 @@ const startStep = () => {
     }
 }
 
+const removeSocialFromCluster = (projectDirectory) => {
+    return {
+        type: actionTypes.REMOVE_SOCIAL_FROM_CLUSTER,
+        payload: {projectDirectory}
+    }
+}
+
 const checkStep = (payload) => {
     return {
         type: actionTypes.CHECK_STEP,
@@ -80,9 +94,11 @@ export default {
     setStepCondition,
     setInput,
     setDeployOpen,
+    setSetupDefaultValues,
     popMessage,
     showInfoDialog,
     hideInfoDialog,
     startStep,
+    removeSocialFromCluster,
     checkStep
 }

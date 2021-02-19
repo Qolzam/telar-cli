@@ -42,7 +42,7 @@ export default function OAuth() {
   const [helpOpen, setHelpOpen] = React.useState(false);
 
   const handleHelp = () => {
-    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/6.md")
+    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/7.md")
   };
 
   const handleCloseHelp = () => {

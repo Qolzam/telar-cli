@@ -59,21 +59,21 @@ export default function SelectSetup() {
             </CardActionArea>
             <CardContent>
                 <Typography gutterBottom variant="h5" component="h2">
-                    OpenFaaS Cloud Community Cluster
+                    OpenFaaS
           </Typography>
                 <Typography variant="body2" color="textSecondary" >
-                    The <a href="https://docs.openfaas.com/openfaas-cloud/community-cluster/" target="_blank">OpenFaaS Cloud Community Cluster</a> is a hosted version of OpenFaaS Cloud. The OpenFaaS Cloud Community Cluster is free to use and probably the quickest and easiest way to try out OpenFaaS. You don't have to set up any servers or even think about Docker, or Kubernetes.
+                    The <a href="https://www.openfaas.com/" target="_blank">OpenFaaS</a> makes it simple to deploy both functions and existing code on Kubernetes.
           </Typography>
           <br/>
 
                 <FormControl component="fieldset" className={classes.formControl}>
                     <FormLabel component="legend">Choose your setup</FormLabel>
                     <RadioGroup aria-label="setup-select" name="setup-select" value={value} onChange={handleChange}>
-                        <FormControlLabel value="ofc" control={<Radio />} label="OpenFaaS Cloud Community Cluster" />
+                        <FormControlLabel value="ofc" control={<Radio />} label="OpenFaaS" />
                         <FormControlLabel disabled value="eks" control={<Radio />} label="AWS EKS" />
                         <FormControlLabel disabled value="gke" control={<Radio />} label="Google Kubernetes Engine" />
                         <FormControlLabel disabled value="aks" control={<Radio />} label="Azure Kubernetes Service" />
-                        <FormControlLabel disabled value="local" control={<Radio />} label="Self-host OpenFaaS Cloud" />
+                        <FormControlLabel disabled value="local" control={<Radio />} label="Self-host OpenFaaS" />
                         <FormControlLabel disabled value="local" control={<Radio />} label="Kubernetes on Bare-metal" />
                         <FormControlLabel disabled value="local" control={<Radio />} label="K3S on Bare-meta" />
                         <FormControlLabel disabled value="local" control={<Radio />} label="Local Kind" />

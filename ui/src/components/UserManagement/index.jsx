@@ -42,7 +42,7 @@ export default function UserManagement() {
   const [helpOpen, setHelpOpen] = React.useState(false);
 
   const handleHelp = () => {
-    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/7.md")
+    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/8.md")
   };
 
   const handleCloseHelp = () => {

@@ -4,11 +4,9 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Drawer } from '@material-ui/core';
 import SetupIcon from '@material-ui/icons/Build';
+import SettingsIcon from '@material-ui/icons/Settings';
 import { withRouter, matchPath } from 'react-router-dom';
 import { SidebarNav } from './components';
-import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
-import DeviceIcon from '@material-ui/icons/DevicesOther';
-import ChartIcon from '@material-ui/icons/InsertChartOutlined';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -49,9 +47,14 @@ const Sidebar = props => {
 
   const pages = [
     {
-      title: 'Setup Telar Social',
+      title: 'Installation',
       href: `/setup`,
       icon: <SetupIcon />
+    },
+    {
+      title: 'Settings',
+      href: `/settings`,
+      icon: <SettingsIcon />
     }
   ];
 

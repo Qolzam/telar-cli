@@ -73,7 +73,7 @@ export default function Database() {
   const [helpType, setHelpType] = React.useState(0);
 
   const handleHelp = (helpType) => {
-   services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/4.md")
+   services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/5.md")
   };
 
   const handleCloseHelp = () => {

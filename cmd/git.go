@@ -2,29 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"os/user"
-	"time"
-
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing/object"
-	"gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
+	"os/exec"
 )
 
 func gitClone(projectDirectory string, repoURL string) error {
-	currentUser, err := user.Current()
-	if err != nil {
-		return err
-	}
-	sshAuth, err := ssh.NewPublicKeysFromFile("git", currentUser.HomeDir+"/.ssh/id_rsa", "")
-	if err != nil {
-		return err
-	}
-	_, err = git.PlainClone(projectDirectory, false, &git.CloneOptions{
-		URL:      repoURL,
-		Progress: os.Stdout,
-		Auth:     sshAuth,
-	})
+
+	cmd := exec.Command("git", "clone", repoURL, projectDirectory)
+	err := cmd.Run()
 
 	if err != nil {
 		return err
@@ -32,65 +16,67 @@ func gitClone(projectDirectory string, repoURL string) error {
 	return nil
 }
 
+func gitStatus(path string) error {
+	cmd := exec.Command("git", "status")
+	cmd.Dir = path
+	err := cmd.Run()
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func gitAdd(path string) error {
+	cmd := exec.Command("git", "add", ".")
+	cmd.Dir = path
+	err := cmd.Run()
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func gitShortSHA(path string) (string, error) {
+	cmd := exec.Command("git", "rev-parse", "--short", "HEAD")
+	cmd.Dir = path
+	output, err := cmd.Output()
+
+	if err != nil {
+		return "", err
+	}
+	return string(output), nil
+}
+
 func gitCommit(path string) error {
-	repo, err := git.PlainOpen(path)
-	if isError(err) {
-		return err
-	}
-	w, err := repo.Worktree()
-	if isError(err) {
+
+	err := gitAdd(path)
+	if err != nil {
 		return err
 	}
 
-	_, err = w.Add(".")
-	if isError(err) {
+	err = gitStatus(path)
+	if err != nil {
 		return err
 	}
 
-	fmt.Println(path)
-	status, err := w.Status()
+	cmd := exec.Command("git", "commit", "-am", "chore: initialize telar social.")
+	cmd.Dir = path
+	err = cmd.Run()
 
-	fmt.Println(status)
-
-	commit, err := w.Commit("[TELAR] Initialize Telar Social.", &git.CommitOptions{
-		Author: &object.Signature{
-			Name:  "Telar",
-			Email: "support@red-gold.tech",
-			When:  time.Now(),
-		},
-	})
-	if isError(err) {
+	if err != nil {
 		return err
 	}
-
-	obj, err := repo.CommitObject(commit)
-	if isError(err) {
-		return err
-	}
-
-	fmt.Println(obj)
 	return nil
 }
 
 func gitPush(path string) error {
-	currentUser, err := user.Current()
-	if err != nil {
-		return err
-	}
-	repo, err := git.PlainOpen(path)
-	if isError(err) {
-		return err
-	}
+	cmd := exec.Command("git", "push")
+	cmd.Dir = path
+	err := cmd.Run()
 
-	sshAuth, err := ssh.NewPublicKeysFromFile("git", currentUser.HomeDir+"/.ssh/id_rsa", "")
 	if err != nil {
-		return err
-	}
-	err = repo.Push(&git.PushOptions{
-		Auth:     sshAuth,
-		Progress: os.Stdout,
-	})
-	if isError(err) {
 		return err
 	}
 	return nil
@@ -109,13 +95,40 @@ func gitDeploy(repoPath string) error {
 }
 
 func cloneTSUI(rootDir, githubUsername string) error {
+	path := rootDir + "/ts-ui"
+	err, exist := directoryFileExist(path)
+	if isError(err) {
+		return err
+	}
+	if exist == true {
+		fmt.Println("Telar social user interface repository exist. ", path)
+		return nil
+	}
 	return gitClone(rootDir+"/ts-ui", fmt.Sprintf("git@github.com:%s/ts-ui.git", githubUsername))
 }
 
 func cloneTSServerless(rootDir, githubUsername string) error {
-	return gitClone(rootDir+"/ts-serverless", fmt.Sprintf("git@github.com:%s/ts-serverless.git", githubUsername))
+	path := rootDir + "/ts-serverless"
+	err, exist := directoryFileExist(path)
+	if isError(err) {
+		return err
+	}
+	if exist == true {
+		fmt.Println("Telar social serverless repository exist. ", path)
+		return nil
+	}
+	return gitClone(path, fmt.Sprintf("git@github.com:%s/ts-serverless.git", githubUsername))
 }
 
 func cloneTelarWeb(rootDir, githubUsername string) error {
-	return gitClone(rootDir+"/telar-web", fmt.Sprintf("git@github.com:%s/telar-web.git", githubUsername))
+	path := rootDir + "/telar-web"
+	err, exist := directoryFileExist(path)
+	if isError(err) {
+		return err
+	}
+	if exist == true {
+		fmt.Println("Telar web repository exist. ", path)
+		return nil
+	}
+	return gitClone(path, fmt.Sprintf("git@github.com:%s/telar-web.git", githubUsername))
 }

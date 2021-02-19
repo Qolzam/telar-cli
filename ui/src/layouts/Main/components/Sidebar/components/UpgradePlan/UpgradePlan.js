@@ -62,7 +62,7 @@ const UpgradePlan = props => {
         <Button
           color="primary"
           component="a"
-          href="https://telar.press/market/devias-kit-pro"
+          href="https://telar.dev/market/devias-kit-pro"
           variant="contained"
         >
           Upgrade

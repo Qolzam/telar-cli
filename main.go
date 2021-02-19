@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	port = 8000
+	port = 31115
 )
 
 type Message struct {
@@ -24,7 +24,7 @@ type ActionModel struct {
 
 func main() {
 	// Bind folder path for packaging with Packr
-	folder := packr.New("telar", "./ui/build")
+	folder := packr.New("telar-pack", "./ui/build")
 	fmt.Println("[INFO] UI packed.", folder.Path)
 
 	// Handle to ./static/build folder on root path
@@ -36,7 +36,7 @@ func main() {
 	http.HandleFunc("/open-url", cmd.OpenURLHandler)
 	http.HandleFunc("/ping", cmd.PingHandler)
 
-	// Run server at port 8000 as goroutine
+	// Run server as goroutine
 	// for non-block working
 	go browser.OpenURL(fmt.Sprintf("http://localhost:%d", port))
 	fmt.Printf("\n[INFO] Server started on http://localhost:%d", port)
