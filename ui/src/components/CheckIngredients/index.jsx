@@ -61,7 +61,7 @@ export default function CheckIngredients() {
   const [helpOpen, setHelpOpen] = React.useState(false);
 
   const handleHelp = () => {
-    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/2.md")
+    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/3.md")
   };
 
   const handleCloseHelp = () => {

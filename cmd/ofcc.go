@@ -170,7 +170,7 @@ func OFCAccessSetting() {
 	echoStep(2)
 }
 func CheckIngredient(projectPath string, githubUsername string) {
-	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/2.md"
+	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/3.md"
 	echoInput("loadingCheckIngredients", true)
 
 	// Check telar-web repository
@@ -216,7 +216,7 @@ func CheckIngredient(projectPath string, githubUsername string) {
 }
 
 func CheckStorage(projectPath string, bucketName string) {
-	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/3.md"
+	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/4.md"
 	echoInput("loadingFirebaseStorage", true)
 
 	// Check serviceAccount.json file for Firebase
@@ -244,7 +244,7 @@ func CheckStorage(projectPath string, bucketName string) {
 }
 
 func CheckDatabase(mongoDBHost, MongoDBPassword string) {
-	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/4.md"
+	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/5.md"
 
 	echoInput("loadingMongoDB", true)
 
@@ -270,7 +270,7 @@ func CheckOAuth() {
 }
 
 func CheckUserManagement(ofGateway string) {
-	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/7.md"
+	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/8.md"
 
 	payloadSecret, err := generatePayloadSecret()
 	if isError(err) {
@@ -284,7 +284,7 @@ func CheckUserManagement(ofGateway string) {
 }
 
 func CheckWebsocket(clientInput ClientInputs) {
-	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/8.md"
+	helpURL := "https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/9.md"
 	echoInput("loadingWebsocket", true)
 
 	err := pingWebsocket(clientInput.WebsocketURL)

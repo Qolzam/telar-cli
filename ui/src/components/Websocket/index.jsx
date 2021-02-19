@@ -68,7 +68,7 @@ export default function Websocket() {
   const [helpOpen, setHelpOpen] = React.useState(false);
 
   const handleHelp = () => {
-   services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/8.md")
+   services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/9.md")
   };
 
   const handleCloseHelp = () => {

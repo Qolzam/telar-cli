@@ -15,7 +15,6 @@
 ### Download 
 - [Linux](https://github.com/Qolzam/telar-cli/releases/download/v0.1.0/telar)
 - [Mac](https://github.com/Qolzam/telar-cli/releases/download/v0.1.0/telar-darwin)
-- [Windows](https://github.com/Qolzam/telar-cli/releases/download/v0.1.0/telar.exe)
 
 
 ### Setup Options

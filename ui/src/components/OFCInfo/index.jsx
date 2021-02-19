@@ -53,7 +53,7 @@ export default function OFCInfo() {
   const [helpOpen, setHelpOpen] = React.useState(false);
 
   const handleHelp = () => {
-    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/1.md")
+    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/2.md")
   };
 
   const handleCloseHelp = () => {
