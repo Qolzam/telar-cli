@@ -71,6 +71,7 @@ type ClientState struct {
 
 type ClientInputs struct {
 	BaseAPIRoute        string `json:"baseAPIRoute"  yaml:"baseAPIRoute,omitempty"`
+	BaseHref            string `json:"baseHref"  yaml:"baseHref,omitempty"`
 	AppName             string `json:"appName"  yaml:"appName,omitempty"`
 	CompanyName         string `json:"companyName"  yaml:"companyName,omitempty"`
 	SupportEmail        string `json:"supportEmail"  yaml:"supportEmail,omitempty"`

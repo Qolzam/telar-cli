@@ -38,6 +38,7 @@ export default function OFCInfo() {
   const baseAPIRoute = useSelector(state => state['inputs']['baseAPIRoute'])
   const ofUsername = useSelector(state => state['inputs']['ofUsername'])
   const ofGateway = useSelector(state => state['inputs']['ofGateway'])
+  const baseHref = useSelector(state => state['inputs']['baseHref'])
   const socialDomain = useSelector(state => state['inputs']['socialDomain'])
   const secretName = useSelector(state => state['inputs']['secretName'])
   const namespace = useSelector(state => state['inputs']['namespace'])
@@ -83,11 +84,11 @@ export default function OFCInfo() {
         <br />
         <br />
         <Typography className={classes.title} color="textPrimary" gutterBottom>
-          Enter social network api base route, e.g. "/function". If you have no base route, leave the textbox empty. 
+          Enter social network base api route, e.g. "/function". If you have no base route, leave the textbox empty. 
         </Typography>
         <TextField
           id="base-route-api"
-          label="Base route API"
+          label="Base API route"
           onChange={handleInputChange('baseAPIRoute')}
           value={baseAPIRoute}
           variant="outlined"
@@ -118,6 +119,18 @@ export default function OFCInfo() {
           value={ofGateway}
           variant="outlined"
           fullWidth
+        />
+        <br />
+        <br />
+        <Typography className={classes.title} color="textPrimary" gutterBottom>
+          Enter social network base href, e.g. "/function". If you have no base href, leave the textbox empty.
+        </Typography>
+        <TextField
+          id="base-href"
+          label="Base href"
+          onChange={handleInputChange('baseHref')}
+          value={baseHref}
+          variant="outlined"
         />
         <br />
         <br />

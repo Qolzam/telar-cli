@@ -21,6 +21,7 @@ type UIConfig struct {
 	CompanyName  string
 	SupportEmail string
 	WSURL        string
+	BaseHref     string
 	Env          []string
 }
 

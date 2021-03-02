@@ -24,6 +24,7 @@ const browserHistory = createBrowserHistory();
 const store = configureAppStore({
   inputs: {
     baseAPIRoute: '',
+    baseHref: '',
     appName: 'Telar Social Engine',
     companyName: 'Telar',
     supportEmail: 'support@telar.dev',
