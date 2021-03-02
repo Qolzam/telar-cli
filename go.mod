@@ -20,3 +20,5 @@ require (
 	google.golang.org/api v0.40.0
 	gopkg.in/yaml.v2 v2.4.0
 )
+
+replace github.com/Qolzam/telar-cli/cmd/ui => /Users/Qolzam/projects/telar/telar-cli/cmd/ui

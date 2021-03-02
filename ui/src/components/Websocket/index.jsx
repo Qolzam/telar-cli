@@ -59,12 +59,6 @@ export default function Websocket() {
 
   const loadingWebsocket = useSelector(state => state['inputs']['loadingWebsocket'])
 
-  const bull = <span className={classes.bullet}>•</span>;
-  const [state, setState] = React.useState({
-    gilad: true,
-    jason: false,
-    antoine: false,
-  });
   const [helpOpen, setHelpOpen] = React.useState(false);
 
   const handleHelp = () => {

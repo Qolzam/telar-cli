@@ -416,7 +416,8 @@ func starteploy(clientInput ClientInputs) {
 				return
 			}
 			envStackVer := "STACK_VER=" + uiStackVersion
-			env = []string{envDockerUser, envStackVer}
+			envHomePage := "HOME_PAGE=" + clientInput.BaseHref + "/web"
+			env = []string{envDockerUser, envStackVer, envHomePage}
 			err = ui.UIUp(&ui.UIConfig{
 				UIPath:       microPath,
 				DockerUser:   clientInput.DockerUser,
