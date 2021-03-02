@@ -13,6 +13,7 @@ const actionTypes = {
     
     // Server HTTP Actions
     REMOVE_SOCIAL_FROM_CLUSTER: "REMOVE_SOCIAL_FROM_CLUSTER",
+    ECHO_PROJECT_DIR: "ECHO_PROJECT_DIR",
     START_STEP : "START_STEP",
     CHECK_STEP : "CHECK_STEP",
 }

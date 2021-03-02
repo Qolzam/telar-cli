@@ -1,9 +1,13 @@
 package cmd
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Qolzam/telar-cli/pkg/log"
+)
 
 func removeFunctionFromCluster(payload RemoveFnPayload) {
-	fmt.Println("[INFO] Start removing functions from cluster ...")
+	log.Info(" Start removing functions from cluster ...")
 	setupCache, err := getSetupYaml(payload.ProjectDirectory)
 	if err != nil {
 		echoDialogInfo(fmt.Sprintf("Can not get `%s` file in [%s]. %s", SETUP_YAML_FILE_NAME, payload.ProjectDirectory, err.Error()), "")
@@ -13,14 +17,14 @@ func removeFunctionFromCluster(payload RemoveFnPayload) {
 	openfaasPass, err := getOpenFaasPass()
 	if isError(err) {
 		echoDialogInfo(err.Error(), "")
-		fmt.Println(err.Error())
+		log.Error(err.Error())
 		return
 	}
 
 	authConf, _, err := runFaaSLogin(setupCache.ClientInputs.OFGateway, setupCache.ClientInputs.OFUsername, openfaasPass, false)
 	if isError(err) {
 		echoDialogInfo(err.Error(), "")
-		fmt.Println(err.Error())
+		log.Error(err.Error())
 		return
 	}
 	garbageRequest := GarbageRequest{

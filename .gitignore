@@ -3,7 +3,9 @@
 
 # Dev files and directories
 ui/node_modules/
+ui/build/
 vendor/
 
 # Final results
 *.app
+pkged.go

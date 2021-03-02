@@ -19,6 +19,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Qolzam/telar-cli/pkg/log"
 	"github.com/openfaas/faas-cli/proxy"
 	"github.com/openfaas/faas-cli/schema"
 )
@@ -43,9 +44,7 @@ func runCloudSeal(name string, pathWD string, args map[string]string, fromFile *
 		return fmt.Errorf("--name is required")
 	}
 
-	fmt.Printf("Sealing secret: %s in namespace: %s\n", name, namespace)
-
-	fmt.Println("")
+	log.Info("Sealing secret: %s in namespace: %s\n", name, namespace)
 
 	enc := base64.StdEncoding
 
@@ -105,7 +104,7 @@ func runCloudSeal(name string, pathWD string, args map[string]string, fromFile *
 		return fmt.Errorf("unable to write secret: %s to %s", name, outputFile)
 	}
 
-	fmt.Printf("%s written.\n", outputFile)
+	log.Info("%s written.\n", outputFile)
 
 	return nil
 }
@@ -131,14 +130,14 @@ func downloadKubeSeal() error {
 
 	downloadURL := "https://github.com/bitnami/sealed-secrets/releases/download/" + releaseVersion + "/kubeseal-" + osVal + "-" + arch
 
-	fmt.Printf("Starting download of kubeseal %s, this could take a few moments.\n", releaseVersion)
+	log.Info("Starting download of kubeseal %s, this could take a few moments.\n", releaseVersion)
 	output, err := downloadFile(http.DefaultClient, downloadURL, "kubeseal", downloadTo)
 
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf(`Download completed, please run:
+	log.Info(`Download completed, please run:
 
   chmod +x %s
   %s --version

@@ -11,6 +11,7 @@ import SetupComponent from './pages/Setup';
 import SettingsComponent from './pages/Settings';
 
 const Routes = () => {
+  
   return (
     <Switch>
       <Redirect

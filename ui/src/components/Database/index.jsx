@@ -53,8 +53,7 @@ export default function Database() {
   const classes = useStyles();
 
   const dispatch = useDispatch()
-  const mongoDBHost = useSelector(state => state['inputs']['mongoDBHost'])
-  const mongoDBPassword = useSelector(state => state['inputs']['mongoDBPassword'])
+  const mongoDBURI = useSelector(state => state['inputs']['mongoDBURI'])
   const mongoDBName = useSelector(state => state['inputs']['mongoDBName'])
   const mongoDBConnection = useSelector(state => state['inputs']['mongoDBConnection'])
 
@@ -131,10 +130,10 @@ export default function Database() {
         <br />
         <TextField
         required
-        id="outlined-required"
-        label="Host"
-        value={mongoDBHost}
-        onChange={handleChange('mongoDBHost')}
+        id="mongo-uri"
+        label="URI"
+        value={mongoDBURI}
+        onChange={handleChange('mongoDBURI')}
         variant="outlined"
       />
       <br />
@@ -146,17 +145,6 @@ export default function Database() {
         value={mongoDBName}
         onChange={handleChange('mongoDBName')}
         
-        variant="outlined"
-      />
-      <br />
-      <br />
-        <TextField
-        required
-        id="outlined-required"
-        label="Password"
-        
-        value={mongoDBPassword}
-        onChange={handleChange('mongoDBPassword')}
         variant="outlined"
       />
       <br />

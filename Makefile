@@ -8,6 +8,7 @@ all: clean build run
 
 clean:
 	@rm -rf ./ui/build
+	@rm -rf ./pkged.go
 	@echo "[✔️] Clean complete!"
 
 .PHONY: build
@@ -15,13 +16,12 @@ clean:
 build:
 	@cd ./ui && yarn install
 	@cd ./ui && yarn build
+	pkger -include /ui/build
 	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -o bin/telar
 	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin go build -o bin/telar-darwin
 	@echo "[✔️] Build complete!"
-	packr clean
-
+	
 .PHONY: run
 
 run:
-	@open ./bin/telar-darwin
 	@echo "[✔️] App is running!"

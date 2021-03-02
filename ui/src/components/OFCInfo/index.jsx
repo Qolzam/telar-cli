@@ -7,7 +7,6 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import { Divider } from '@material-ui/core';
 import actions from '../../store/actions'
 import HelpDialog from '../HelpDialog';
 import services from '../../services';
@@ -36,12 +35,13 @@ export default function OFCInfo() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
   const dispatch = useDispatch()
-  const appID = useSelector(state => state['inputs']['appID'])
+  const baseAPIRoute = useSelector(state => state['inputs']['baseAPIRoute'])
   const ofUsername = useSelector(state => state['inputs']['ofUsername'])
   const ofGateway = useSelector(state => state['inputs']['ofGateway'])
   const socialDomain = useSelector(state => state['inputs']['socialDomain'])
   const secretName = useSelector(state => state['inputs']['secretName'])
   const namespace = useSelector(state => state['inputs']['namespace'])
+  const dockerUser = useSelector(state => state['inputs']['dockerUser'])
   const kubeconfigPath = useSelector(state => state['inputs']['kubeconfigPath'])
   const handleInputChange = (name) => (event) => {
     const {value} = event.currentTarget
@@ -83,14 +83,13 @@ export default function OFCInfo() {
         <br />
         <br />
         <Typography className={classes.title} color="textPrimary" gutterBottom>
-          Enter social network identifier. Default is `my-social-network`.
+          Enter social network api base route, e.g. "/function". If you have no base route, leave the textbox empty. 
         </Typography>
         <TextField
-          required
-          id="social-id"
-          label="Scoial Network ID"
-          onChange={handleInputChange('appID')}
-          value={appID}
+          id="base-route-api"
+          label="Base route API"
+          onChange={handleInputChange('baseAPIRoute')}
+          value={baseAPIRoute}
           variant="outlined"
         />
         <br />
@@ -123,7 +122,7 @@ export default function OFCInfo() {
         <br />
         <br />
         <Typography className={classes.title} color="textPrimary" gutterBottom>
-          Enter your social network URL e.g. https://social.com or https://social.com/function
+          Enter your social network URL e.g. https://social.com or https://social.com
         </Typography>
         <TextField
           required
@@ -145,6 +144,20 @@ export default function OFCInfo() {
           label="OpenFaaS namespace"
           onChange={handleInputChange('namespace')}
           value={namespace}
+          variant="outlined"
+          fullWidth
+        />
+        <br />
+        <br />
+        <Typography className={classes.title} color="textPrimary" gutterBottom>
+          Enter docker user.
+        </Typography>
+        <TextField
+          required
+          id="docker-user"
+          label="Docker user"
+          onChange={handleInputChange('dockerUser')}
+          value={dockerUser}
           variant="outlined"
           fullWidth
         />

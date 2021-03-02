@@ -2,17 +2,16 @@ package cmd
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
+	"github.com/Qolzam/telar-cli/pkg/log"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func checkDB(mongoDBHost string, mongoDBPassword string) error {
-	dbHost := strings.Replace(mongoDBHost, "<password>", mongoDBPassword, -1)
-	fmt.Println(dbHost)
+func checkDB(mongoDBURI string) error {
+	dbHost := mongoDBURI
+	log.Info(dbHost)
 	client, err := mongo.NewClient(options.Client().ApplyURI(dbHost))
 	ctx := context.Background()
 	err = client.Connect(ctx)
