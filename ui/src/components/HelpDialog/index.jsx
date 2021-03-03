@@ -8,7 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 export default function HelpDialog(props) {
 
-  const [scroll, setScroll] = React.useState('paper');
+  const [scroll] = React.useState('paper');
   const {open, onClose} = props
   const descriptionElementRef = React.useRef(null);
   React.useEffect(() => {

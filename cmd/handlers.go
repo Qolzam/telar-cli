@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/Qolzam/telar-cli/pkg/log"
 	"github.com/gorilla/websocket"
 	"github.com/mitchellh/mapstructure"
 	browser "github.com/pkg/browser"
@@ -80,6 +81,8 @@ func ClientHandler(w http.ResponseWriter, r *http.Request) {
 		decoder.Decode(action.Payload)
 		go checkStep(output)
 
+	case ECHO_PROJECT_DIR:
+		go echoProjectDir()
 	case REMOVE_SOCIAL_FROM_CLUSTER:
 		var output RemoveFnPayload
 		cfg := &mapstructure.DecoderConfig{
@@ -99,11 +102,11 @@ func checkStep(payload ClientState) {
 
 	if payload.SetupStep != 0 {
 		writeSetupCache(payload.Inputs.ProjectDirectory, payload.Inputs)
-		fmt.Printf("Writing user inputs in setup cache...")
+		log.Info("Writing user inputs in setup cache...")
 	}
 	switch payload.SetupStep {
 	case 0:
-		CheckInitStep(payload.Inputs.ProjectDirectory)
+		CheckInitStep(&payload.Inputs)
 	case 1:
 		OFCAccessSetting()
 	case 2:
@@ -111,7 +114,7 @@ func checkStep(payload ClientState) {
 	case 3:
 		CheckStorage(payload.Inputs.ProjectDirectory, payload.Inputs.BucketName)
 	case 4:
-		CheckDatabase(payload.Inputs.MongoDBHost, payload.Inputs.MongoDBPassword)
+		CheckDatabase(payload.Inputs.MongoDBURI)
 	case 5:
 		CheckRecaptcha()
 	case 6:
@@ -147,7 +150,7 @@ func PingHandler(w http.ResponseWriter, r *http.Request) {
 func Echo(message ClientAction) {
 
 	if err := conn.WriteJSON(message); err != nil {
-		fmt.Println(err)
+		log.Error(err.Error())
 	}
 
 }

@@ -18,7 +18,8 @@ func prepareSecret(pathWD, name, namespace string, kubeConfigPath *string, telar
 func createSecret(pathWD, name, namespace string, kubeConfigPath *string, telarSecrets *TelarSecrets) error {
 
 	args := make(map[string]string)
-	args["mongo-pwd"] = telarSecrets.MongoPwd
+	args["mongo-host"] = telarSecrets.MongoURI
+	args["mongo-database"] = telarSecrets.MongoDB
 	args["recaptcha-key"] = telarSecrets.RecaptchaKey
 	args["ts-client-secret"] = telarSecrets.TsClientSecret
 	args["redis-pwd"] = telarSecrets.RedisPwd
@@ -48,7 +49,8 @@ func createSecret(pathWD, name, namespace string, kubeConfigPath *string, telarS
 func createK8SSecret(pathWD, name string, telarSecrets *TelarSecrets) error {
 
 	args := make(map[string]string)
-	args["mongo-pwd"] = telarSecrets.MongoPwd
+	args["mongo-host"] = telarSecrets.MongoURI
+	args["mongo-database"] = telarSecrets.MongoDB
 	args["recaptcha-key"] = telarSecrets.RecaptchaKey
 	args["ts-client-secret"] = telarSecrets.TsClientSecret
 	args["redis-pwd"] = telarSecrets.RedisPwd

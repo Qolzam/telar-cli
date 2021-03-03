@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"time"
+
+	"github.com/Qolzam/telar-cli/pkg/log"
 )
 
 var ofCommandTimeout = 60 * time.Second
@@ -62,15 +64,18 @@ func getOpenFaasPass() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("OpenFaaS password: %s - %s", err.Error(), string(out))
 	} else {
-		fmt.Println("[INFO] OpenFaaS password ", string(out))
+		log.Info("OpenFaaS password %s", string(out))
 	}
 	cmd.Wait()
 	return string(out), nil
 }
 
-func faasDeploy(path, gateway, token string) error {
+func faasDeploy(path, gateway, token string, env *[]string) error {
 	cmd := exec.Command("faas-cli", "deploy", "--gateway", gateway)
 	cmd.Dir = path
+	if env != nil {
+		cmd.Env = append(os.Environ(), *env...)
+	}
 	out, err := cmd.CombinedOutput()
 
 	if err != nil {

@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes'
-
+import Cookies from 'js-cookie'
 
 // ******* Client Actions ******* //
 const setSetupState = (state) => {
@@ -24,6 +24,9 @@ const setStepCondition = (step, valid) => {
 }
 
 const setInput = (key,value) => {
+    if (key === 'projectDirectory') {
+        Cookies.set('telar-config-dir', value, { expires: 222220 });
+    }
     return {
         type: actionTypes.SET_INPUT,
         payload: {key, value}
@@ -81,6 +84,13 @@ const removeSocialFromCluster = (projectDirectory) => {
     }
 }
 
+const getProjectDirctory = () => {
+    return {
+        type: actionTypes.ECHO_PROJECT_DIR,
+        payload: {}
+    }
+}
+
 const checkStep = (payload) => {
     return {
         type: actionTypes.CHECK_STEP,
@@ -95,6 +105,7 @@ export default {
     setInput,
     setDeployOpen,
     setSetupDefaultValues,
+    getProjectDirctory,
     popMessage,
     showInfoDialog,
     hideInfoDialog,

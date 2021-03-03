@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Qolzam/telar-cli/pkg/log"
 	"github.com/openfaas/faas-cli/proxy"
 
 	"github.com/openfaas/faas-cli/config"
@@ -29,7 +30,7 @@ func runFaaSLogin(gateway, username, password string, tlsInsecure bool) (*config
 	}
 
 	if len(password) > 0 {
-		fmt.Println("WARNING! Using --password is insecure, consider using: cat ~/faas_pass.txt | faas-cli login -u user --password-stdin")
+		log.Info("WARNING! Using --password is insecure, consider using: cat ~/faas_pass.txt | faas-cli login -u user --password-stdin")
 		if passwordStdin {
 			return nil, nil, fmt.Errorf("--password and --password-stdin are mutually exclusive")
 		}
@@ -57,7 +58,7 @@ func runFaaSLogin(gateway, username, password string, tlsInsecure bool) (*config
 		return nil, nil, fmt.Errorf("must provide a non-empty password via --password or --password-stdin")
 	}
 
-	fmt.Println("Calling the OpenFaaS server to validate the credentials...")
+	log.Info("Calling the OpenFaaS server to validate the credentials...")
 
 	if err := validateFaasLogin(gateway, username, password, timeout, tlsInsecure); err != nil {
 		return nil, nil, err
@@ -77,7 +78,7 @@ func runFaaSLogin(gateway, username, password string, tlsInsecure bool) (*config
 	if err != nil {
 		return nil, nil, err
 	}
-	fmt.Println("credentials saved for", user, gateway)
+	log.Info("credentials saved for %s - %s", user, gateway)
 
 	return &authConfig, &user, nil
 }
@@ -85,7 +86,7 @@ func runFaaSLogin(gateway, username, password string, tlsInsecure bool) (*config
 func validateFaasLogin(gatewayURL string, user string, pass string, timeout time.Duration, insecureTLS bool) error {
 
 	if len(checkTLSInsecure(gatewayURL, insecureTLS)) > 0 {
-		fmt.Printf(NoTLSWarn)
+		log.Info(NoTLSWarn)
 	}
 
 	client := proxy.MakeHTTPClient(&timeout, insecureTLS)

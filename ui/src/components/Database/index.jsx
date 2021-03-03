@@ -8,11 +8,9 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import actions from '../../store/actions'
@@ -53,15 +51,13 @@ export default function Database() {
   const classes = useStyles();
 
   const dispatch = useDispatch()
-  const mongoDBHost = useSelector(state => state['inputs']['mongoDBHost'])
-  const mongoDBPassword = useSelector(state => state['inputs']['mongoDBPassword'])
+  const mongoDBURI = useSelector(state => state['inputs']['mongoDBURI'])
   const mongoDBName = useSelector(state => state['inputs']['mongoDBName'])
   const mongoDBConnection = useSelector(state => state['inputs']['mongoDBConnection'])
 
   const loadingMongoDB = useSelector(state => state['inputs']['loadingMongoDB'])
 
-  const bull = <span className={classes.bullet}>•</span>;
-  const [state, setState] = React.useState({
+  const [] = React.useState({
     gilad: true,
     jason: false,
     antoine: false,
@@ -70,9 +66,9 @@ export default function Database() {
 
   // 0 : instruction
   // 1 : warning
-  const [helpType, setHelpType] = React.useState(0);
+  const [helpType] = React.useState(0);
 
-  const handleHelp = (helpType) => {
+  const handleHelp = () => {
    services.openURL("https://github.com/Qolzam/telar-cli/blob/master/docs/ofcc-setup/5.md")
   };
 
@@ -97,7 +93,7 @@ export default function Database() {
     <Card className={classes.root} variant="outlined">
       <CardContent>
         <Typography variant={'h5'} color="textPrimary" gutterBottom>
-        ⚠️ We strictly recommend you to use your own MongoDB. 
+        We strictly recommend you to use your own MongoDB. 
         Public MongoDB only use for testing, because everybody can see your data and also there is no garanty for data persistance. 
         Public MongoDB is a free and shared MongoDB account! 
   </Typography>
@@ -131,10 +127,10 @@ export default function Database() {
         <br />
         <TextField
         required
-        id="outlined-required"
-        label="Host"
-        value={mongoDBHost}
-        onChange={handleChange('mongoDBHost')}
+        id="mongo-uri"
+        label="URI"
+        value={mongoDBURI}
+        onChange={handleChange('mongoDBURI')}
         variant="outlined"
       />
       <br />
@@ -146,17 +142,6 @@ export default function Database() {
         value={mongoDBName}
         onChange={handleChange('mongoDBName')}
         
-        variant="outlined"
-      />
-      <br />
-      <br />
-        <TextField
-        required
-        id="outlined-required"
-        label="Password"
-        
-        value={mongoDBPassword}
-        onChange={handleChange('mongoDBPassword')}
         variant="outlined"
       />
       <br />

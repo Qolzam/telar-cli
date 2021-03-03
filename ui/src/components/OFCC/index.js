@@ -111,16 +111,16 @@ export default function OFCC() {
   const stepCondition = {}
   const steps = getSteps();
 
-
+  
   // ***** Conditions ***** //
 
  const state = useSelector(state =>  state) 
 
   // Init step
-  stepCondition[0]= (validInputs(state, ['projectDirectory']))
+  stepCondition[0]= (validInputs(state, ['appID', 'appName', 'companyName', 'supportEmail', 'projectDirectory' ]))
 
   // Init step
-  stepCondition[1]= (validInputs(state, ['appID','ofGateway', 'ofUsername', 'socialDomain', 'secretName', 'namespace']))
+  stepCondition[1]= (validInputs(state, ['ofGateway', 'dockerUser', 'ofUsername', 'socialDomain', 'secretName', 'namespace']))
   
   // Check ingredients
   stepCondition[2] = !validCheckbox(state,['loadingCheckIngredients'])
@@ -129,7 +129,7 @@ export default function OFCC() {
   stepCondition[3] = (!validCheckbox(state, ['loadingFirebaseStorage'] ) && validInputs(state, ['bucketName']) === true)
 
   // Database
-  stepCondition[4] = (!validCheckbox(state, ['loadingMongoDB'] ) && validInputs(state, ['mongoDBHost', 'mongoDBPassword', 'mongoDBName']) === true)
+  stepCondition[4] = (!validCheckbox(state, ['loadingMongoDB'] ) && validInputs(state, ['mongoDBURI', 'mongoDBName']) === true)
 
   // Firebase storage
   stepCondition[5] = (validInputs(state, ['siteKeyRecaptcha', 'recaptchaKey']))

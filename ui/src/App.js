@@ -1,28 +1,35 @@
 
-import React, { useState, useEffect } from 'react';
+import React, {  useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { ThemeProvider } from '@material-ui/styles';
-import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import theme from './theme';
 import './assets/scss/index.scss';
 import './App.css';
-import Routes from './Routes';
 import configureAppStore from './store'
 import { Provider } from 'react-redux'
 import actions from './store/actions';
 import DialogInfo from './components/DialogInfo'
+import Master from './Master';
+import Routes from "./Routes";
+
 const browserHistory = createBrowserHistory();
 
 
 
 const store = configureAppStore({
   inputs: {
+    baseAPIRoute: '',
+    baseHref: '',
+    appName: 'Telar Social Engine',
+    companyName: 'Telar',
+    supportEmail: 'support@telar.dev',
     appID: 'my-social-network',
+    dockerUser: '',
     ofUsername: 'admin',
     ofGateway: 'openfaas.example.com',
     socialDomain: 'https://mysocial.com',
@@ -30,8 +37,7 @@ const store = configureAppStore({
     namespace: 'openfaas-fn',
     projectDirectory: "",
     bucketName: "",
-    mongoDBHost: "",
-    mongoDBPassword: "",
+    mongoDBURI: "",
     mongoDBName: "test",
     siteKeyRecaptcha: "",
     recaptchaKey: "",
@@ -140,7 +146,6 @@ function App() {
   // after render is fixed on the screen.
   // See https://reactjs.org/docs/hooks-reference.html#useeffect
   useEffect(() => {
-   
   });
 
   
@@ -148,6 +153,7 @@ function App() {
     <Router history={browserHistory}>
       <Provider store={store}>
         <ThemeProvider theme={theme}>
+          <Master />
           <Routes />
           <AppSnackbar />
           <DialogInfo />

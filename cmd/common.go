@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"os/user"
@@ -17,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Qolzam/telar-cli/pkg/log"
 	execute "github.com/alexellis/go-execute/pkg/v1"
 	stack "github.com/openfaas/faas-cli/stack"
 	"gopkg.in/yaml.v2"
@@ -28,7 +28,7 @@ var (
 )
 
 const (
-	TELAR_GITHUB_USER_NAME = "telarpress"
+	TELAR_GITHUB_USER_NAME = "red-gold"
 	IMAGE_OWNER            = "telar"
 	REGISTRY_URL           = "docker.io/telar/"
 
@@ -45,11 +45,13 @@ const (
 	// Server HTTP Actions
 	START_STEP                 = "START_STEP"
 	REMOVE_SOCIAL_FROM_CLUSTER = "REMOVE_SOCIAL_FROM_CLUSTER"
+	ECHO_PROJECT_DIR           = "ECHO_PROJECT_DIR"
 	CHECK_STEP                 = "CHECK_STEP"
 )
 
 type TelarSecrets struct {
-	MongoPwd,
+	MongoURI,
+	MongoDB,
 	RecaptchaKey,
 	TsClientSecret,
 	RedisPwd,
@@ -68,17 +70,22 @@ type ClientState struct {
 }
 
 type ClientInputs struct {
+	BaseAPIRoute        string `json:"baseAPIRoute"  yaml:"baseAPIRoute,omitempty"`
+	BaseHref            string `json:"baseHref"  yaml:"baseHref,omitempty"`
+	AppName             string `json:"appName"  yaml:"appName,omitempty"`
+	CompanyName         string `json:"companyName"  yaml:"companyName,omitempty"`
+	SupportEmail        string `json:"supportEmail"  yaml:"supportEmail,omitempty"`
 	AppID               string `json:"appID"  yaml:"appID,omitempty"`
 	OFUsername          string `json:"ofUsername"  yaml:"ofUsername,omitempty"`
 	OFGateway           string `json:"ofGateway"  yaml:"ofGateway,omitempty"`
 	SocialDomain        string `json:"socialDomain"  yaml:"socialDomain,omitempty"`
 	SecretName          string `json:"secretName"  yaml:"secretName,omitempty"`
 	Namespace           string `json:"namespace"  yaml:"namespace,omitempty"`
+	DockerUser          string `json:"dockerUser"  yaml:"dockerUser,omitempty"`
 	KubeconfigPath      string `json:"kubeconfigPath"  yaml:"kubeconfigPath,omitempty"`
 	ProjectDirectory    string `json:"projectDirectory"  yaml:"projectDirectory,omitempty"`
 	BucketName          string `json:"bucketName"  yaml:"bucketName,omitempty"`
-	MongoDBHost         string `json:"mongoDBHost"  yaml:"mongoDBHost,omitempty"`
-	MongoDBPassword     string `json:"mongoDBPassword"  yaml:"mongoDBPassword,omitempty"`
+	MongoDBURI          string `json:"mongoDBURI"  yaml:"mongoDBURI,omitempty"`
 	MongoDBName         string `json:"mongoDBName"  yaml:"mongoDBName,omitempty"`
 	SiteKeyRecaptcha    string `json:"siteKeyRecaptcha"  yaml:"siteKeyRecaptcha,omitempty"`
 	RecaptchaKey        string `json:"recaptchaKey"  yaml:"recaptchaKey,omitempty"`
@@ -101,9 +108,10 @@ type TelarConfig struct {
 	CoockieDomain    string `json:"coockieDomain"`
 	Bucket           string `json:"bucket"`
 	ClientID         string `json:"clientID"`
-	URL              string `json:"url"`
+	Gateway          string `json:"gateway"`
+	Origin           string `json:"origin"`
 	WebsocketURL     string `json:"websocketURL"`
-	MongoDBHost      string `json:"mongoDBHost"`
+	MongoDBURI       string `json:"mongoDBURI"`
 	MongoDatabase    string `json:"mongoDatabase"`
 	RecaptchaSiteKey string `json:"recaptchaSiteKey"`
 	RefEmail         string `json:"refEmail"`
@@ -238,7 +246,7 @@ func checkSudo() bool {
 	output, err := cmd.Output()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err.Error())
 	}
 
 	// output has trailing \n
@@ -250,7 +258,7 @@ func checkSudo() bool {
 	i, err := strconv.Atoi(string(output[:len(output)-1]))
 
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err.Error())
 	}
 
 	if i == 0 {
@@ -329,7 +337,7 @@ func generatePayloadSecret() (string, error) {
 	}
 
 	payloadSecret := fmt.Sprintf("%s", taskExe.Stdout)
-	fmt.Println(payloadSecret)
+	log.Info(payloadSecret)
 	return payloadSecret, nil
 }
 
@@ -437,7 +445,7 @@ func kubectlCreateSecret(path, name, namespace string, kubeConfigPath *string, a
 		cmdBash = fmt.Sprintf("cd %s; %s; %s;", path, cmdExportKubeConfig, strings.Join(cmdArgs[:], " "))
 
 	}
-	fmt.Println("[INFO] Create secret final command ", cmdBash)
+	log.Info("Create secret final command : %s ", cmdBash)
 	cmd := exec.Command("/bin/sh", "-c", cmdBash)
 	secretFileName := fmt.Sprintf("%s-%s.yml", namespace, name)
 	secretsYamlPath := filepath.Join(path, secretFileName)
@@ -464,7 +472,7 @@ func kubectlApplyFile(path string, kubeConfigPath *string) error {
 		cmdBash = fmt.Sprintf("%s; %s;", cmdExportKubeConfig, cmdApply)
 
 	}
-	fmt.Println("[INFO] Kubectl apply final command ", cmdBash)
+	log.Info("Kubectl apply final command %s", cmdBash)
 	out, err := exec.Command("/bin/sh", "-c", cmdBash).CombinedOutput()
 
 	if isError(err) {

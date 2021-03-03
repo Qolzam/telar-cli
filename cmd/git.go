@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 	"os/exec"
+
+	"github.com/Qolzam/telar-cli/pkg/log"
 )
 
 func gitClone(projectDirectory string, repoURL string) error {
@@ -101,7 +103,7 @@ func cloneTSUI(rootDir, githubUsername string) error {
 		return err
 	}
 	if exist == true {
-		fmt.Println("Telar social user interface repository exist. ", path)
+		log.Info("Telar social user interface repository exist. %s", path)
 		return nil
 	}
 	return gitClone(rootDir+"/ts-ui", fmt.Sprintf("git@github.com:%s/ts-ui.git", githubUsername))
@@ -114,7 +116,7 @@ func cloneTSServerless(rootDir, githubUsername string) error {
 		return err
 	}
 	if exist == true {
-		fmt.Println("Telar social serverless repository exist. ", path)
+		log.Info("Telar social serverless repository exist. %s", path)
 		return nil
 	}
 	return gitClone(path, fmt.Sprintf("git@github.com:%s/ts-serverless.git", githubUsername))
@@ -127,7 +129,7 @@ func cloneTelarWeb(rootDir, githubUsername string) error {
 		return err
 	}
 	if exist == true {
-		fmt.Println("Telar web repository exist. ", path)
+		log.Info("Telar web repository exist. %s ", path)
 		return nil
 	}
 	return gitClone(path, fmt.Sprintf("git@github.com:%s/telar-web.git", githubUsername))

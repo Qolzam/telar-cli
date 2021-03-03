@@ -8,11 +8,9 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import actions from '../../store/actions'
@@ -54,17 +52,13 @@ export default function Websocket() {
   const dispatch = useDispatch()
   const gateway = useSelector(state => state['inputs']['gateway'])
   const payloadSecret = useSelector(state => state['inputs']['payloadSecret'])
+  const origin = useSelector(state => new URL(state['inputs']['socialDomain']).origin)
+  const baseAPIRoute = useSelector(state => state['inputs']['baseAPIRoute'])
   const websocketURL = useSelector(state => state['inputs']['websocketURL'])
   const websocketConnection = useSelector(state => state['inputs']['websocketConnection'])
 
   const loadingWebsocket = useSelector(state => state['inputs']['loadingWebsocket'])
 
-  const bull = <span className={classes.bullet}>•</span>;
-  const [state, setState] = React.useState({
-    gilad: true,
-    jason: false,
-    antoine: false,
-  });
   const [helpOpen, setHelpOpen] = React.useState(false);
 
   const handleHelp = () => {
@@ -106,13 +100,36 @@ export default function Websocket() {
       <br />
         <br />
       <Typography className={classes.title} color="textPrimary" gutterBottom>
-       Enter Websocket server information and telar server gateway
+       Enter Websocket server information and add other information in you Telar Social WebSocket environment variables
         </Typography>
        
         <TextField
-        onChange={handleChange('gateway')}
+        InputProps={{
+          readonly: true,
+        }}
+        label="Base API route"
+        value={baseAPIRoute}
+        variant="outlined"
+      />
+      <br />
+      <br />
+       
+        <TextField
+        InputProps={{
+          readonly: true,
+        }}
         label="Gateway"
         value={gateway}
+        variant="outlined"
+      />
+      <br />
+      <br />
+        <TextField
+        InputProps={{
+          readonly: true,
+        }}
+        label="Origin"
+        value={origin}
         variant="outlined"
       />
       <br />
