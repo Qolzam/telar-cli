@@ -15,12 +15,11 @@
 ## Get telar-cli
 
 ```bash
-# Note: you can also run without `sudo` and move the binary yourself
+
 curl -sLS https://cli.telar.dev | sudo sh
 
-# Windows users with Git Bash
-curl -sLS https://cli.telar.dev | sh
 ```
+> You can also run without `sudo` and move the binary yourself
 
 ### Setup Options
 
