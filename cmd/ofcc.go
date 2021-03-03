@@ -311,7 +311,7 @@ func starteploy(clientInput ClientInputs) {
 	echoOpenDeploy(true)
 
 	host := content.GetDomainFromURI(clientInput.SocialDomain)
-	log.Info("Host: ", host)
+	log.Info("Host: %s", host)
 
 	// Apply stack
 	telarConfig := TelarConfig{
@@ -455,7 +455,7 @@ func starteploy(clientInput ClientInputs) {
 
 func getSetupYaml(projectPath string) (*OFCSetupCache, error) {
 	filePath := path.Join(projectPath, SETUP_YAML_FILE_NAME)
-	log.Info("Reading setup cache from ", filePath)
+	log.Info("Reading setup cache from %s", filePath)
 
 	bytesOut, readErr := ioutil.ReadFile(filePath)
 	if readErr != nil {

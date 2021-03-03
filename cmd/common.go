@@ -445,7 +445,7 @@ func kubectlCreateSecret(path, name, namespace string, kubeConfigPath *string, a
 		cmdBash = fmt.Sprintf("cd %s; %s; %s;", path, cmdExportKubeConfig, strings.Join(cmdArgs[:], " "))
 
 	}
-	log.Info("Create secret final command ", cmdBash)
+	log.Info("Create secret final command : %s ", cmdBash)
 	cmd := exec.Command("/bin/sh", "-c", cmdBash)
 	secretFileName := fmt.Sprintf("%s-%s.yml", namespace, name)
 	secretsYamlPath := filepath.Join(path, secretFileName)
@@ -472,7 +472,7 @@ func kubectlApplyFile(path string, kubeConfigPath *string) error {
 		cmdBash = fmt.Sprintf("%s; %s;", cmdExportKubeConfig, cmdApply)
 
 	}
-	log.Info("Kubectl apply final command ", cmdBash)
+	log.Info("Kubectl apply final command %s", cmdBash)
 	out, err := exec.Command("/bin/sh", "-c", cmdBash).CombinedOutput()
 
 	if isError(err) {

@@ -9,3 +9,4 @@ vendor/
 # Final results
 *.app
 pkged.go
+bin

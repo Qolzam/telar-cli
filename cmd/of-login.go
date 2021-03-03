@@ -78,7 +78,7 @@ func runFaaSLogin(gateway, username, password string, tlsInsecure bool) (*config
 	if err != nil {
 		return nil, nil, err
 	}
-	log.Info("credentials saved for", user, gateway)
+	log.Info("credentials saved for %s - %s", user, gateway)
 
 	return &authConfig, &user, nil
 }

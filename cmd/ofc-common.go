@@ -64,7 +64,7 @@ func getOpenFaasPass() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("OpenFaaS password: %s - %s", err.Error(), string(out))
 	} else {
-		log.Info("OpenFaaS password ", string(out))
+		log.Info("OpenFaaS password %s", string(out))
 	}
 	cmd.Wait()
 	return string(out), nil
