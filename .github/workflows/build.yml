@@ -29,4 +29,4 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Make all
-        run: make all
+        run: CI='' make all

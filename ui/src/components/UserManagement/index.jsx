@@ -7,7 +7,6 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import { Divider } from '@material-ui/core';
 import actions from '../../store/actions'
 import HelpDialog from '../HelpDialog';
 import services from '../../services';
@@ -61,7 +60,6 @@ export default function UserManagement() {
     </CardActions>
   </Card>
   )
-  const bull = <span className={classes.bullet}>•</span>;
 
   const handleChange = name => event => {
     dispatch(actions.setInput(name,event.currentTarget.value))

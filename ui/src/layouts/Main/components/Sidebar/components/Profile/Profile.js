@@ -24,16 +24,12 @@ const useStyles = makeStyles(theme => ({
 
 const Profile = props => {
   const { className, ...rest } = props;
-  let userLogin = 'de-amir'
   const { pathname } = props.history.location;
   const matchFunction = matchPath(pathname, {
     path: '/:user',
     strict: true,
   });
 
-  if(matchFunction) {
-    userLogin =  matchFunction.params.user.toLowerCase()
-  }
   const classes = useStyles();
   const users = {
     'de-amir': { 

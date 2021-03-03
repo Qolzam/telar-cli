@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles';
 import { SelectSetup } from '../../components'
 import { OFCC } from '../../components'
@@ -17,12 +17,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function SetupComponent() {
   const setupState = useSelector(state => state['setupState'])
-  const classes = useStyles();
-  const [value, setValue] = React.useState('Controlled');
+  const [, setValue] = React.useState('Controlled');
 
-  const handleChange = event => {
-    setValue(event.target.value);
-  };
 
   return (
     <>

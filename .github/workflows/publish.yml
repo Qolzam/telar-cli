@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Make all
-        run: make all
+        run: CI='' make all
       - name: Upload release binaries
         uses: alexellis/upload-assets@0.2.3
         env:
