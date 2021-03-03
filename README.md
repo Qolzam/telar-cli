@@ -12,10 +12,15 @@
 ### Telar Social
  Telar Social Network is an open source social network written in Go and based on serveless functions. A modern social network using cloud native technology based on OpenFaaS serverless function.
  
-### Download 
-- [Linux](https://github.com/Qolzam/telar-cli/releases/download/v0.2/telar)
-- [Mac](https://github.com/Qolzam/telar-cli/releases/download/v0.2/telar-darwin)
+## Get telar-cli
 
+```bash
+# Note: you can also run without `sudo` and move the binary yourself
+curl -sLS https://cli.telar.dev | sudo sh
+
+# Windows users with Git Bash
+curl -sLS https://cli.telar.dev | sh
+```
 
 ### Setup Options
 

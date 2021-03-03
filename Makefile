@@ -6,7 +6,12 @@ SOURCE_DIRS = cmd pkg main.go
 export GO111MODULE=on
 
 .PHONY: all
-all: gofmt test build dist hash
+all: clean gofmt test build dist hash
+
+.PHONY: clean
+clean:
+	@rm -rf ./ui/build
+	@rm -rf ./pkged.go
 
 .PHONY: build
 build:
@@ -22,6 +27,9 @@ test:
 
 .PHONY: dist
 dist:
+	@cd ./ui && yarn install
+	@cd ./ui && yarn build
+	pkger -include /ui/build
 	mkdir -p bin
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/telar-cli
 	CGO_ENABLED=0 GOOS=darwin go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/telar-cli-darwin
