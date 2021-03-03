@@ -14,12 +14,7 @@
  
 ## Get telar-cli
 
-```bash
-
-curl -sLS https://cli.telar.dev | sudo sh
-
-```
-> You can also run without `sudo` and move the binary yourself
+Download from [releases](https://github.com/Qolzam/telar-cli/releases)
 
 ### Setup Options
 
