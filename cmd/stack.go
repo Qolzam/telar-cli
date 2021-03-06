@@ -68,9 +68,6 @@ func applyAppConfig(repoPath, mongoDBURI, mongoDatabase, recaptchaSiteKey, refEm
 	if isError(err) {
 		return err
 	}
-
-	envs["mongo_host"] = mongoDBURI
-	envs["mongo_database"] = mongoDatabase
 	envs["recaptcha_site_key"] = recaptchaSiteKey
 	envs["ref_email"] = refEmail
 	envYaml := make(map[string]interface{})
