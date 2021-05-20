@@ -34,11 +34,8 @@ Download from [releases](https://github.com/Qolzam/telar-cli/releases)
 ### Blog Posts
 [Telar Social one-click setup: OpenFaaS](https://medium.com/red-gold/telar-social-one-click-setup-openfaas-cloud-community-cluster-68814b3bf47c)
 
-## Support with buying a coffee ☕️☕️☕️
-Our top backers [Become a backer](https://www.patreon.com/qolzam)
-
-## Sponsors 🥉🥈🥇
-Our top sponsors [Become a sponsor](https://www.patreon.com/qolzam)
+## Sponsors
+[Become a sponsor](https://www.patreon.com/qolzam)
 
 ## Author
 
