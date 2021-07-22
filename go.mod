@@ -16,7 +16,7 @@ require (
 	github.com/openfaas/openfaas-cloud/sdk v0.0.0-20201215121043-ffbb84724081
 	github.com/pkg/browser v0.0.0-20210115035449-ce105d075bb4
 	github.com/subosito/gotenv v1.2.0
-	go.mongodb.org/mongo-driver v1.4.6
+	go.mongodb.org/mongo-driver v1.5.1
 	google.golang.org/api v0.40.0
 	gopkg.in/yaml.v2 v2.4.0
 )
